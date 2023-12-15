@@ -1,0 +1,21 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.github.chenxig.kmmplugin</id>
+    <name>KMM_Plugin</name>
+    <vendor>chen-xi-g</vendor>
+
+    <depends>org.jetbrains.android</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
+
+    <actions>
+        <group icon="AllIcons.Actions.MoveToButton">
+            <add-to-group anchor="before" group-id="NewGroup" relative-to-action="NewFile" />
+            <action class="com.github.chenxig.kmmplugin.action.NewScreenAction" icon="/icons/action_icon.png"
+                text="Screen"/>
+        </group>
+    </actions>
+
+</idea-plugin>
