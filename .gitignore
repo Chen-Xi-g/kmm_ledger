@@ -87,8 +87,6 @@ lint/tmp/
 */release
 # 添加API文档目录
 docs
-# 添加本地Maven仓库目录、
-repository
 
 cache/
 
