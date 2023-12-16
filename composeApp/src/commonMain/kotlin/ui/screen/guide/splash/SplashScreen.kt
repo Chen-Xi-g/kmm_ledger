@@ -1,5 +1,6 @@
 package ui.screen.guide.splash
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,11 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import platform.WindowInfo
 import platform.rememberWindowInfo
 import platform.safeArea
+import ui.theme.LedgerTheme
 import ui.theme.LocalColor
 import ui.theme.LocalDrawable
 import ui.widget.LogoTextWidget
@@ -94,5 +98,18 @@ fun SplashScreenAuto(
                 fontSize = 14.sp
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewSplashScreen(){
+    LedgerTheme {
+        SplashScreen(
+            component = SplashVM(
+                componentContext = DefaultComponentContext(LifecycleRegistry()),
+                onNavigationToScreenGuide = {}
+            )
+        )
     }
 }

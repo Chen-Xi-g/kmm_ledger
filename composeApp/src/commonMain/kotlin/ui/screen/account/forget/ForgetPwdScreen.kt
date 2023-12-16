@@ -73,9 +73,6 @@ fun ForgetPwdScreen(
             ForgetPwdContent(component, state, component::onEvent)
         }
     }
-    Toast(state.error){
-        component.onEvent(ForgetPwdEvent.ClearError)
-    }
     AnimatedVisibility(state.isLoading){
         LoadingDialog()
     }

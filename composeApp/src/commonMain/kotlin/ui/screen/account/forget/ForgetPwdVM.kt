@@ -14,6 +14,7 @@ import core.domain.user_case.ValidationUsername
 import core.navigation.BaseComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
+import ui.widget.ToastState
 
 /**
  * 忘记密码
@@ -25,6 +26,7 @@ class ForgetPwdVM(
     componentContext: ComponentContext,
     private val accountUsername: String = "",
     private val goBack: () -> Unit,
+    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationPassword: ValidationPassword = ValidationPassword(),
@@ -61,14 +63,6 @@ class ForgetPwdVM(
 
     override fun onEvent(event: ForgetPwdEvent) {
         when(event){
-            ForgetPwdEvent.ClearError -> {
-                updateState {
-                    it.copy(
-                        error = null
-                    )
-                }
-                getCodeImage()
-            }
             ForgetPwdEvent.GoBack -> {
                 goBack()
             }
@@ -178,18 +172,19 @@ class ForgetPwdVM(
                 is ResNet.Error -> {
                     updateState {
                         it.copy(
-                            error = resp.msg,
                             isLoading = false
                         )
                     }
+                    onToast.toastError(resp.msg)
+                    getCodeImage()
                 }
                 is ResNet.Success -> {
                     updateState {
                         it.copy(
-                            error = resp.msg,
                             isLoading = false
                         )
                     }
+                    onToast.toastSuccess(resp.msg)
                 }
             }
         }
@@ -202,18 +197,13 @@ class ForgetPwdVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    updateState {
-                        it.copy(
-                            error = resp.msg
-                        )
-                    }
+                    onToast.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {
                         it.copy(
                             codeImg = resp.data?.img ?: "",
                             uuid = resp.data?.uuid ?: "",
-                            error = null
                         )
                     }
                 }

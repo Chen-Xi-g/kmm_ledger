@@ -2,8 +2,13 @@
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -12,7 +17,11 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import core.navigation.RootComponent
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import platform.backAnimation
+import platform.log
 import ui.screen.MainScreen
 import ui.screen.account.activate.ActivateScreen
 import ui.screen.account.agreement.AgreementScreen
@@ -22,9 +31,17 @@ import ui.screen.account.register.RegisterScreen
 import ui.screen.guide.GuideScreen
 import ui.screen.guide.splash.SplashScreen
 import ui.theme.LedgerTheme
+import ui.widget.Toast
+import ui.widget.ToastState
+import ui.widget.rememberToastState
 
 @Composable
 fun App(root: RootComponent) {
+    val toastState = rememberToastState()
+    root.toastState = { text, style ->
+        toastState.text.value = text
+        toastState.style.value = style
+    }
     LedgerTheme {
         Surface(
             modifier = Modifier
@@ -51,6 +68,7 @@ fun App(root: RootComponent) {
                 }
             }
         }
+        Toast(toastState)
     }
 }
 

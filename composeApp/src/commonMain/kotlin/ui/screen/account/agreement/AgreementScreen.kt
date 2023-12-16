@@ -31,9 +31,6 @@ fun AgreementScreen(
     ) {
         AgreementContent(state, component::onEvent)
     }
-    Toast(text = state.error) {
-        component.onEvent(AgreementEvent.ClearError)
-    }
     AnimatedVisibility(visible = state.isLoading) {
         LoadingDialog()
     }

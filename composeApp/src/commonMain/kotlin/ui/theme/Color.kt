@@ -19,7 +19,10 @@ import androidx.compose.ui.graphics.Color
  * @param backIcon 返回按钮颜色
  * @param border 边框颜色
  * @param card 卡片颜色
- * @param toastBg Toast背景颜色
+ * @param toastBg Toast背景颜色，默认状态下的Toast背景颜色
+ * @param toastSuccess Toast背景颜色，成功状态下的Toast背景颜色
+ * @param toastError Toast背景颜色，错误状态下的Toast背景颜色
+ * @param homeBg 首页背景颜色
  */
 @Immutable
 data class CustomColorPalette(
@@ -36,6 +39,8 @@ data class CustomColorPalette(
     val border: Color = Color.Unspecified,
     val card: Color = Color.Unspecified,
     val toastBg: Color = Color.Unspecified,
+    val toastSuccess: Color = Color.Unspecified,
+    val toastError: Color = Color.Unspecified,
     val homeBg: Color = Color.Unspecified,
 )
 
@@ -55,6 +60,8 @@ val COLOR_THEME_SECONDARY = Color(0xFF82BFFF)
 val COLOR_BORDER = Color(0xFFD9D9D9)
 val COLOR_CARD = Color(0xFFF8F9FD)
 val COLOR_TOAST_BG = Color(0xFFDDDDDD)
+val COLOR_TOAST_SUCCESS = Color(0xFF93EBBC)
+val COLOR_TOAST_ERROR = Color(0xFFFF4545)
 val COLOR_TEXT_ERROR = Color(0xFFDC3545)
 
 
@@ -69,6 +76,8 @@ val COLOR_THEME_SECONDARY_DARK = Color(0xFF447ACC)
 val COLOR_BORDER_DARK = Color(0xFF444444)
 val COLOR_CARD_DARK = Color(0xFF333333)
 val COLOR_TOAST_BG_DARK = Color(0xFF444444)
+val COLOR_TOAST_SUCCESS_DARK = Color(0xFF4CAF50)
+val COLOR_TOAST_ERROR_DARK = Color(0xFFFF7F7F)
 val COLOR_TEXT_ERROR_DARK = Color(0xFFFF453A)
 
 /**
@@ -88,6 +97,8 @@ val LedgerLightColorScheme = CustomColorPalette(
     border = COLOR_BORDER,
     card = COLOR_CARD,
     toastBg = COLOR_TOAST_BG,
+    toastSuccess = COLOR_TOAST_SUCCESS,
+    toastError = COLOR_TOAST_ERROR,
     homeBg = COLOR_F7F7F7
 )
 
@@ -108,5 +119,7 @@ val LedgerDarkColorScheme = CustomColorPalette(
     border = COLOR_BORDER_DARK,
     card = COLOR_CARD_DARK,
     toastBg = COLOR_TOAST_BG_DARK,
+    toastSuccess = COLOR_TOAST_SUCCESS_DARK,
+    toastError = COLOR_TOAST_ERROR_DARK,
     homeBg = COLOR_SURFACE_DARK
 )

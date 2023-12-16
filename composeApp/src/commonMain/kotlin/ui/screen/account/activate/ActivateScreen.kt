@@ -39,14 +39,13 @@ import ui.widget.BottomOutlineInput
 import ui.widget.FillGradationButton
 import ui.widget.LoadingDialog
 import ui.widget.LogoTextWidget
-import ui.widget.Toast
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ActivateScreen(
-    component: ActivateVM
+    component: ActivateVM,
 ) {
     val state by component.state.collectAsState()
     Surface(
@@ -73,9 +72,6 @@ fun ActivateScreen(
                 onEvent = component::onEvent
             )
         }
-    }
-    Toast(state.error){
-        component.onEvent(ActivateEvent.ClearError)
     }
     AnimatedVisibility(state.isLoading){
         LoadingDialog()

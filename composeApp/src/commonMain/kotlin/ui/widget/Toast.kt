@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,8 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import platform.WindowInfo
 import platform.safeArea
 import ui.theme.LocalColor
 import kotlin.math.absoluteValue
@@ -52,34 +55,37 @@ import kotlin.math.roundToInt
  *
  * @author 高国峰
  * @date 2023/12/8-22:24
- *
- * @param text 文本,当文本为空时不显示
- * @param onDismissed 消失回调,需要在这里将文本置空
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Toast(
-    text: String? = "",
-    onDismissed: () -> Unit
+    state: ToastState
 ) {
-    if (text.isNullOrBlank()) return
-    var state by remember { mutableStateOf(false) }
-    val transition = updateTransition(targetState = state, label = "toast")
-    LaunchedEffect(key1 = text) {
-        state = true
-        delay(if(text.length > 15) 3000 else 2000)
-        state = false
+    var toastState by remember { mutableStateOf(false) }
+    val transition = updateTransition(targetState = toastState, label = "toast")
+    val bgColor = when (state.style.value) {
+        ToastState.ToastStyle.Default -> LocalColor.current.toastBg
+        ToastState.ToastStyle.Success -> LocalColor.current.toastSuccess
+        ToastState.ToastStyle.Error -> LocalColor.current.toastError
     }
-    LaunchedEffect(state, transition.currentState, transition.isRunning){
-        if (!state && !transition.currentState &&!transition.isRunning){
-            onDismissed()
+    LaunchedEffect(key1 = state.text.value) {
+        if (state.text.value.isNotBlank()) {
+            toastState = true
+            delay(if (state.text.value.length > 15) 3000 else 2000)
+            if (toastState)
+                toastState = false
+        }
+    }
+    LaunchedEffect(state.text.value, transition.currentState, transition.isRunning) {
+        if (!toastState && !transition.currentState && !transition.isRunning && state.text.value.isNotBlank()) {
+            state.text.value = ""
         }
     }
     transition.AnimatedVisibility(
         visible = { it },
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically()
-    ){
+    ) {
         Surface(
             modifier = Modifier
                 .safeArea()
@@ -88,8 +94,7 @@ fun Toast(
                 .fillMaxWidth()
                 .toastGesturesDetector(
                     onDismissed = {
-                        state = false
-                        onDismissed()
+                        toastState = false
                     }
                 )
         ) {
@@ -97,13 +102,13 @@ fun Toast(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = LocalColor.current.toastBg,
+                        color = bgColor,
                         shape = RoundedCornerShape(8.dp)
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = text,
+                    text = state.text.value,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(15.dp)
                 )
@@ -111,6 +116,40 @@ fun Toast(
         }
     }
 }
+
+/**
+ * Toast 状态
+ *
+ * @param text 文本
+ * @param style Toast样式，成功或者失败
+ */
+data class ToastState(
+    var text: MutableState<String> = mutableStateOf(""),
+    var style: MutableState<ToastStyle> = mutableStateOf(ToastStyle.Default)
+) {
+    sealed class ToastStyle {
+        data object Default : ToastStyle()
+        data object Success : ToastStyle()
+        data object Error : ToastStyle()
+    }
+}
+
+/**
+ * 记录Toast状态
+ */
+@Composable
+fun rememberToastState(
+    msg: String = "",
+    style: ToastState.ToastStyle = ToastState.ToastStyle.Default
+): ToastState{
+    return remember {
+        ToastState(
+            text = mutableStateOf(msg),
+            style = mutableStateOf(style)
+        )
+    }
+}
+
 
 private fun Modifier.toastGesturesDetector(
     onDismissed: () -> Unit,

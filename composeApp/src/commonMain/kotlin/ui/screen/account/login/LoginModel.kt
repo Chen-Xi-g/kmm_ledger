@@ -9,7 +9,6 @@ import core.navigation.UiState
  * @param isAcceptedTerms 条款是否同意
  * @param codeImg 验证码图片
  * @param uuid 验证码图片的uuid
- * @param error 错误信息
  * @param errorUsername 用户名错误信息
  * @param errorPassword 密码错误信息
  * @param errorCaptcha 验证码错误信息
@@ -19,7 +18,6 @@ data class LoginState(
     val isAcceptedTerms: Boolean = false,
     val codeImg: String = "",
     val uuid: String = "",
-    val error: String? = null,
     val errorUsername: String? = null,
     val errorPassword: String? = null,
     val errorCaptcha: String? = null,
@@ -37,11 +35,6 @@ sealed interface LoginEvent : UiEvent{
      * 更新条款是否同意
      */
     data class UpdateTerms(val isAcceptedTerms: Boolean) : LoginEvent
-
-    /**
-     * 清空数据
-     */
-    data object ClearError : LoginEvent
 
     /**
      * 刷新验证码

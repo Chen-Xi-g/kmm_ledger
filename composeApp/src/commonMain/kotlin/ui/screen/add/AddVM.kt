@@ -1,23 +1,23 @@
-package ui.screen.home
+package ui.screen.add
 
 import com.arkivanov.decompose.ComponentContext
 import core.navigation.BaseComponent
 import ui.widget.ToastState
 
 /**
- * 首页VM
+ * 新增账单 VM
  *
  * @author 高国峰
- * @date 2023/12/14-09:54
+ * @date 2023/12/16-12:38
  */
-class HomeVM(
+class AddVM(
     componentContext: ComponentContext,
     private val onToast: (String?, ToastState.ToastStyle) -> Unit
-) : BaseComponent<HomeState, HomeEvent, HomeEffect>(componentContext){
-    override fun initialState(): HomeState {
-        return HomeState()
+) : BaseComponent<AddState, AddEvent, AddEffect>(componentContext) {
+    override fun initialState(): AddState {
+        return AddState()
     }
 
-    override fun onEvent(event: HomeEvent) {
+    override fun onEvent(event: AddEvent) {
     }
 }

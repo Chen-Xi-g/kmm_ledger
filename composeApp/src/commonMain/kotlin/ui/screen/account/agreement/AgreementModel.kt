@@ -12,15 +12,12 @@ import core.navigation.UiState
 data class AgreementState(
     val content: String = "",
     val title: String = "",
-    val isLoading: Boolean = false,
-    val error: String? = null
+    val isLoading: Boolean = false
 ): UiState
 
 sealed interface AgreementEvent: UiEvent{
 
     data object GoBack: AgreementEvent
-
-    data object ClearError: AgreementEvent
 
     /**
      * 加载协议

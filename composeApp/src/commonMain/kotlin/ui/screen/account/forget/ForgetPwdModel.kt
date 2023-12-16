@@ -13,7 +13,6 @@ import core.navigation.UiState
  * @param errorConfirmPassword 确认密码错误信息
  * @param errorCaptcha 验证码错误信息
  * @param isLoading 是否正在加载
- * @param error 错误信息
  */
 data class ForgetPwdState(
     val codeImg: String = "",
@@ -22,8 +21,7 @@ data class ForgetPwdState(
     val errorPassword: String? = null,
     val errorConfirmPassword: String? = null,
     val errorCaptcha: String? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null
+    val isLoading: Boolean = false
 ) : UiState
 
 /**
@@ -40,11 +38,6 @@ sealed interface ForgetPwdEvent : UiEvent {
      * 刷新验证码
      */
     data object RefreshCode : ForgetPwdEvent
-
-    /**
-     * 清空错误
-     */
-    data object ClearError : ForgetPwdEvent
 
     /**
      * 提交

@@ -13,6 +13,7 @@ import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import core.utils.GlobalNavigator
 import core.utils.GlobalNavigatorListener
 import core.utils.KeyRepository
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import platform.goHome
 import ui.screen.MainVM
@@ -23,6 +24,7 @@ import ui.screen.account.login.LoginVM
 import ui.screen.account.register.RegisterVM
 import ui.screen.guide.GuideVM
 import ui.screen.guide.splash.SplashVM
+import ui.widget.ToastState
 
 /**
  * 设置导航
@@ -36,6 +38,11 @@ class RootComponent(
 ) : ComponentContext by componentContext, BackHandlerOwner {
 
     /**
+     * Toast状态
+     */
+    var toastState: ((String, ToastState.ToastStyle) -> Unit)? = null
+
+    /**
      * 导航堆栈
      */
     private val navigation = StackNavigation<Configuration>()
@@ -46,6 +53,11 @@ class RootComponent(
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    /**
+     * 记录当前点击返回按钮的时间
+     */
+    private var lastBackTime = 0L
 
     init {
         GlobalNavigator.setListener(
@@ -63,17 +75,20 @@ class RootComponent(
     ): Child {
         return when (config) {
             Configuration.Splash -> Child.Splash(
-                SplashVM(componentContext) {
-                    if (KeyRepository.isFirstLaunch) {
-                        KeyRepository.isFirstLaunch = false
-                        navigation.replaceCurrent(Configuration.Guide)
-                        return@SplashVM
-                    } else if (KeyRepository.token.isNotEmpty()) {
-                        navigation.replaceCurrent(Configuration.Main)
-                    } else {
-                        navigation.replaceCurrent(Configuration.Login)
+                SplashVM(
+                    componentContext = componentContext,
+                    onNavigationToScreenGuide = {
+                        if (KeyRepository.isFirstLaunch) {
+                            KeyRepository.isFirstLaunch = false
+                            navigation.replaceCurrent(Configuration.Guide)
+                            return@SplashVM
+                        } else if (KeyRepository.token.isNotEmpty()) {
+                            navigation.replaceCurrent(Configuration.Main)
+                        } else {
+                            navigation.replaceCurrent(Configuration.Login)
+                        }
                     }
-                }
+                )
             )
 
             Configuration.Guide -> Child.Guide(
@@ -87,9 +102,7 @@ class RootComponent(
             )
 
             Configuration.Main -> Child.Main(
-                MainVM(componentContext) {
-                    onBackClicked()
-                }
+                MainVM(componentContext, ::showToast)
             )
 
             Configuration.Login -> Child.Login(
@@ -98,6 +111,7 @@ class RootComponent(
                     goBack = {
                         onBackClicked()
                     },
+                    onToast = ::showToast,
                     onNavigationToScreenMain = {
                         navigation.replaceCurrent(Configuration.Main)
                     },
@@ -125,7 +139,8 @@ class RootComponent(
                     accountUsername = config.username,
                     goBack = {
                         onBackClicked()
-                    }
+                    },
+                    onToast = ::showToast,
                 )
             )
 
@@ -135,7 +150,8 @@ class RootComponent(
                     accountUsername = config.username,
                     goBack = {
                         onBackClicked()
-                    }
+                    },
+                    onToast = ::showToast,
                 )
             )
 
@@ -144,7 +160,8 @@ class RootComponent(
                     componentContext,
                     goBack = {
                         onBackClicked()
-                    }
+                    },
+                    onToast = ::showToast,
                 )
             )
 
@@ -154,7 +171,8 @@ class RootComponent(
                     type = config.type,
                     goBack = {
                         onBackClicked()
-                    }
+                    },
+                    onToast = ::showToast,
                 )
             )
         }
@@ -275,6 +293,10 @@ class RootComponent(
             return
         }
         navigation.pop()
+    }
+
+    private fun showToast(msg: String?, style: ToastState.ToastStyle) {
+        toastState?.invoke(msg ?: "", style)
     }
 
 }

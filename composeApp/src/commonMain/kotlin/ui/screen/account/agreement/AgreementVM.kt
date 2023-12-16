@@ -2,11 +2,13 @@ package ui.screen.account.agreement
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnCreate
+import core.data.net.ResNet
 import core.data.repository.AccountRepositoryImpl
 import core.domain.repository.AccountRepository
 import core.navigation.BaseComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
+import ui.widget.ToastState
 
 /**
  * 系统协议
@@ -20,6 +22,7 @@ class AgreementVM(
     component: ComponentContext,
     private val type: Int,
     private val goBack: () -> Unit,
+    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
     private val repository: AccountRepository = AccountRepositoryImpl(),
 ) :
     BaseComponent<AgreementState, AgreementEvent, UiEffect>(component) {
@@ -42,14 +45,6 @@ class AgreementVM(
                 goBack()
             }
 
-            AgreementEvent.ClearError -> {
-                updateState {
-                    it.copy(
-                        error = null
-                    )
-                }
-            }
-
             is AgreementEvent.LoadAgreement -> {
                 loadAgreement()
             }
@@ -58,11 +53,7 @@ class AgreementVM(
 
     private fun loadAgreement() {
         if (type != 1 && type != 2) {
-            updateState {
-                it.copy(
-                    error = "协议类型错误"
-                )
-            }
+            onToast.toastError("协议类型错误")
             return
         }
         updateState {
@@ -71,20 +62,23 @@ class AgreementVM(
             )
         }
         scope.launch {
-            val res = repository.agreement(type)
-            if (res.isSuccess()) {
-                updateState {
-                    it.copy(
-                        content = res.data ?: "",
-                        isLoading = false
-                    )
+            when(val resp = repository.agreement(type)){
+                is ResNet.Error -> {
+                    updateState {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                    onToast.toastError(resp.msg)
                 }
-            } else {
-                updateState {
-                    it.copy(
-                        error = res.msg,
-                        isLoading = false
-                    )
+                is ResNet.Success -> {
+                    updateState {
+                        it.copy(
+                            content = resp.data ?: "",
+                            isLoading = false
+                        )
+                    }
+                    onToast.toastSuccess(resp.msg)
                 }
             }
         }

@@ -15,7 +15,6 @@ import core.navigation.UiState
  * @property errorConfirmPassword 确认密码错误
  * @property errorCaptcha 验证码错误
  * @property isLoading 是否正在加载
- * @property error 错误信息
  */
 data class RegisterState(
     val codeImg: String = "",
@@ -25,8 +24,7 @@ data class RegisterState(
     val errorPassword: String? = null,
     val errorConfirmPassword: String? = null,
     val errorCaptcha: String? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null
+    val isLoading: Boolean = false
 ): UiState
 
 /**
@@ -38,11 +36,6 @@ sealed interface RegisterEvent: UiEvent{
      * 返回
      */
     data object GoBack: RegisterEvent
-
-    /**
-     * 清空错误
-     */
-    data object ClearError: RegisterEvent
 
     /**
      * 获取验证码

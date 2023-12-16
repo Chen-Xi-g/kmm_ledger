@@ -77,9 +77,6 @@ fun RegisterScreen(
             )
         }
     }
-    Toast(state.error){
-        component.onEvent(RegisterEvent.ClearError)
-    }
     AnimatedVisibility(state.isLoading){
         LoadingDialog()
     }

@@ -17,6 +17,7 @@ import core.navigation.UiEffect
 import core.utils.KeyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ui.widget.ToastState
 
 /**
  * 登录组件
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 class LoginVM(
     componentContext: ComponentContext,
     private val goBack: () -> Unit,
+    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
     private val onNavigationToScreenMain: () -> Unit,
     private val onNavigationToScreenRegister: (String) -> Unit,
     private val onNavigationToScreenActivateAccount: (String) -> Unit,
@@ -75,15 +77,6 @@ class LoginVM(
                         isAcceptedTerms = event.isAcceptedTerms
                     )
                 }
-            }
-
-            LoginEvent.ClearError -> {
-                updateState {
-                    it.copy(
-                        error = null
-                    )
-                }
-                getCodeImage()
             }
 
             LoginEvent.RefreshCode -> {
@@ -160,10 +153,10 @@ class LoginVM(
                 it.copy(
                     errorUsername = usernameResult.errorMessage,
                     errorPassword = passwordResult.errorMessage,
-                    errorCaptcha = codeResult.errorMessage,
-                    error = termsResult.errorMessage
+                    errorCaptcha = codeResult.errorMessage
                 )
             }
+            onToast.toastError(termsResult.errorMessage ?: "")
             return
         }
         updateState {
@@ -184,10 +177,11 @@ class LoginVM(
                 is ResNet.Error -> {
                     updateState {
                         it.copy(
-                            error = resp.msg,
                             isLoading = false
                         )
                     }
+                    onToast.toastError(resp.msg)
+                    getCodeImage()
                 }
 
                 is ResNet.Success -> {
@@ -195,10 +189,10 @@ class LoginVM(
                     KeyRepository.token = resp.data ?: ""
                     updateState {
                         it.copy(
-                            error = null,
                             isLoading = false
                         )
                     }
+                    onToast.toastSuccess("登录成功")
                     launch(Dispatchers.Main){
                         onNavigationToScreenMain()
                     }
@@ -214,19 +208,14 @@ class LoginVM(
         scope.launch {
             when (val resp = repository.codeImage()) {
                 is ResNet.Error -> {
-                    updateState {
-                        it.copy(
-                            error = resp.msg
-                        )
-                    }
+                    onToast.toastError(resp.msg)
                 }
 
                 is ResNet.Success -> {
                     updateState {
                         it.copy(
                             codeImg = resp.data?.img ?: "",
-                            uuid = resp.data?.uuid ?: "",
-                            error = null
+                            uuid = resp.data?.uuid ?: ""
                         )
                     }
                 }

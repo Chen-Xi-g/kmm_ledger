@@ -11,15 +11,13 @@ import core.navigation.UiState
  * @param errorUsername 用户名错误信息
  * @param errorCaptcha 验证码错误信息
  * @param isLoading 是否正在加载
- * @param error 错误信息
  */
 data class ActivateState(
     val codeImg: String = "",
     val uuid: String = "",
     val errorUsername: String? = null,
     val errorCaptcha: String? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null,
+    val isLoading: Boolean = false
 ): UiState
 
 sealed interface ActivateEvent: UiEvent{
@@ -27,11 +25,6 @@ sealed interface ActivateEvent: UiEvent{
      * 返回
      */
     data object GoBack: ActivateEvent
-
-    /**
-     * 更新验证码图片
-     */
-    data object ClearError: ActivateEvent
 
     /**
      * 刷新验证码
