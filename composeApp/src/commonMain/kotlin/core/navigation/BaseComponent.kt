@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.widget.ToastState
 
 /**
  * 统一封装导航组件
@@ -54,6 +55,27 @@ abstract class BaseComponent<S : UiState, EV : UiEvent, EF : UiEffect>(
         scope.launch {
             _effect.emit(effect)
         }
+    }
+
+    /**
+     * toast默认状态
+     */
+    fun ((String?, ToastState.ToastStyle) -> Unit).normal(msg: String?) {
+        this(msg, ToastState.ToastStyle.Default)
+    }
+
+    /**
+     * toast错误状态
+     */
+    fun ((String?, ToastState.ToastStyle) -> Unit).fail(msg: String?) {
+        this(msg, ToastState.ToastStyle.Error)
+    }
+
+    /**
+     * toast成功状态
+     */
+    fun ((String?, ToastState.ToastStyle) -> Unit).success(msg: String?) {
+        this(msg, ToastState.ToastStyle.Success)
     }
 }
 

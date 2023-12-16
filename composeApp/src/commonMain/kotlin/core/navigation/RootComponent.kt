@@ -14,6 +14,7 @@ import core.utils.GlobalNavigatorListener
 import kotlinx.serialization.Serializable
 import platform.goHome
 import ui.screen.splash.SplashVM
+import ui.widget.ToastState
 
 /**
  * 设置导航
@@ -25,6 +26,11 @@ import ui.screen.splash.SplashVM
 class RootComponent(
     componentContext: ComponentContext
 ) : ComponentContext by componentContext, BackHandlerOwner {
+
+    /**
+     * Toast状态
+     */
+    var toastState: ((String, ToastState.ToastStyle) -> Unit)? = null
 
     /**
      * 导航堆栈
@@ -54,7 +60,10 @@ class RootComponent(
     ): Child {
         return when (config) {
             Configuration.Splash -> Child.Splash(
-                SplashVM(componentContext) {
+                SplashVM(
+                    componentContext = componentContext,
+                    onToast = ::showToast
+                ) {
                     // TODO: 跳转到引导页, 建议使用pushNew
                 }
             )
@@ -99,6 +108,10 @@ class RootComponent(
             return
         }
         navigation.pop()
+    }
+
+    private fun showToast(msg: String?, style: ToastState.ToastStyle) {
+        toastState?.invoke(msg ?: "", style)
     }
 
 }

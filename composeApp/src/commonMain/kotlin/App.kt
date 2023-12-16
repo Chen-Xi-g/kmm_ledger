@@ -15,9 +15,16 @@ import core.navigation.RootComponent
 import platform.backAnimation
 import ui.screen.splash.SplashScreen
 import ui.theme.LedgerTheme
+import ui.widget.Toast
+import ui.widget.rememberToastState
 
 @Composable
 fun App(root: RootComponent) {
+    val toastState = rememberToastState()
+    root.toastState = { text, style ->
+        toastState.text.value = text
+        toastState.style.value = style
+    }
     LedgerTheme {
         Surface(
             modifier = Modifier
@@ -37,6 +44,7 @@ fun App(root: RootComponent) {
                 }
             }
         }
+        Toast(toastState)
     }
 }
 

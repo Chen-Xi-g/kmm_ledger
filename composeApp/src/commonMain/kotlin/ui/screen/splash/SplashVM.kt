@@ -11,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ui.widget.ToastState
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -21,6 +22,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 class SplashVM(
     componentContext: ComponentContext,
+    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
     private val onNavigationToScreenGuide: () -> Unit
 ) : BaseComponent<UiState, SplashEvent, UiEffect>(componentContext){
 
@@ -45,6 +47,7 @@ class SplashVM(
         when(event){
             SplashEvent.Skip -> {
                 countDownJob?.cancel()
+                onToast.normal("跳过")
                 onNavigationToScreenGuide()
             }
         }
