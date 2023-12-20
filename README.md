@@ -10,7 +10,6 @@
 - `main` 分支为主分支，包含了忞鹿记账所有平台的代码。
 - `empty_project` 分支为空项目分支，可以从这个分支开始自己的项目，开箱即用。
 - `plugin_template` 分支为插件模板分支，可以从这个分支新增自己的插件功能，该插件可以配合`empty_project`一键创建Screen/ViewModel/Model代码。
-- `compose` 纯粹的Android代码, 使用Jetpack Compose开发, 为Android开发者提供应用示例。
 
 ## 项目说明
 
