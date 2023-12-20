@@ -10,20 +10,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.PagerScope
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
+import com.arkivanov.decompose.InternalDecomposeApi
+import com.arkivanov.decompose.Ref
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.PagesScrollAnimation
+import com.arkivanov.decompose.extensions.compose.jetbrains.pages.defaultHorizontalPager
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.arkivanov.decompose.hashString
+import com.arkivanov.decompose.router.pages.ChildPages
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import platform.log
 import ui.screen.add.AddScreen
@@ -54,10 +66,15 @@ fun MainScreen(
                 selectIndex = pages.selectedIndex,
                 onClick = component::selectPage
             )
-        }
+        },
+        containerColor = LocalColor.current.surface,
     ){
-        Pages(
-            pages = component.pages,
+        // Pages 是 Decompose 提供的一个组件，用于管理多个页面。
+        // 内部使用HorizontalPager实现
+        // 需要注意的是compose-multiplatform-core在1.5.4版本存在缓慢滑动onPageSelected不回调的问题。
+        Pages<MainVM.Configuration, MainVM.Page>(
+            modifier = Modifier.padding(it),
+            pages = component.pages.subscribeAsState(),
             onPageSelected = component::selectPage,
             scrollAnimation = PagesScrollAnimation.Default,
         ){ index: Int, page: MainVM.Page ->
@@ -114,3 +131,69 @@ private fun NavigationBarItem(menu: Menu, isSelect: Boolean, onClick: () -> Unit
         )
     }
 }
+
+@OptIn(InternalDecomposeApi::class)
+@ExperimentalFoundationApi
+@ExperimentalDecomposeApi
+@Composable
+fun <C : Any, T : Any> Pages(
+    pages: State<ChildPages<C, T>>,
+    onPageSelected: (index: Int) -> Unit,
+    modifier: Modifier = Modifier,
+    scrollAnimation: PagesScrollAnimation = PagesScrollAnimation.Disabled,
+    pager: Pager = defaultHorizontalPager(),
+    key: (Child<C, T>) -> Any = { it.configuration.hashString() },
+    pageContent: @Composable PagerScope.(index: Int, page: T) -> Unit,
+) {
+    val childPages by pages
+    val selectedIndex = childPages.selectedIndex
+    val state = rememberPagerState(
+        initialPage = selectedIndex,
+        pageCount = { childPages.items.size },
+    )
+
+    LaunchedEffect(selectedIndex) {
+        if (state.currentPage != selectedIndex) {
+            when (scrollAnimation) {
+                is PagesScrollAnimation.Disabled -> state.scrollToPage(selectedIndex)
+                is PagesScrollAnimation.Default -> state.animateScrollToPage(page = selectedIndex)
+                is PagesScrollAnimation.Custom -> state.animateScrollToPage(page = selectedIndex, animationSpec = scrollAnimation.spec)
+            }
+        }
+    }
+
+    DisposableEffect(state.currentPage, state.targetPage) {
+        if (state.currentPage == state.targetPage) {
+            onPageSelected(state.currentPage)
+        }
+
+        onDispose {}
+    }
+
+    pager(
+        modifier,
+        state,
+        { key(childPages.items[it]) },
+    ) { pageIndex ->
+        val item = childPages.items[pageIndex]
+
+        val pageRef = remember(item.configuration) { Ref(item.instance) }
+        if (item.instance != null) {
+            pageRef.value = item.instance
+        }
+
+        val page = pageRef.value
+        if (page != null) {
+            pageContent(pageIndex, page)
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+internal typealias Pager =
+        @Composable (
+            Modifier,
+            PagerState,
+            key: (index: Int) -> Any,
+            pageContent: @Composable PagerScope.(index: Int) -> Unit,
+        ) -> Unit

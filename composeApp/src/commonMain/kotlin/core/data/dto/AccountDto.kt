@@ -3,7 +3,6 @@ package core.data.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 /**
  * 系统协议
  *
@@ -22,4 +21,27 @@ data class AgreementDto(
     val agreementId: Long = 0,
     @SerialName("agreementType")
     val agreementType: String = ""
+)
+
+/**
+ * 验证码传输对象
+ *
+ * @author 高国峰
+ * @date 2023/12/8-17:33
+ */
+@Serializable
+data class CodeImageDto(
+    val img: String = "",
+    val uuid: String = ""
+)
+
+/**
+ * Token传输对象
+ *
+ * @author 高国峰
+ * @date 2023/12/8-17:33
+ */
+@Serializable
+data class TokenDto(
+    val token: String = ""
 )

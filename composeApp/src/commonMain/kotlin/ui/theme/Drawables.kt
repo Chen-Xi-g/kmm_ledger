@@ -12,10 +12,14 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @param guide1 引导页1
  * @param guide2 引导页2
  * @param guide3 引导页3
- * @param backIcon 返回图标
- * @param uncheckIcon 未选中图标
- * @param checkIcon 选中图标
- * @param mapIcon 地图图标
+ * @param back 返回图标
+ * @param uncheck 未选中图标
+ * @param check 选中图标
+ * @param map 地图图标
+ * @param visible 可见图标
+ * @param invisible 不可见图标
+ * @param dateFilter 日期筛选图标
+ * @param scrollTop 滚动到顶部图标
  */
 @Immutable
 data class CustomDrawable(
@@ -25,12 +29,14 @@ data class CustomDrawable(
     val guide1: String = "",
     val guide2: String = "",
     val guide3: String = "",
-    val backIcon: String = "",
-    val uncheckIcon: String = "",
-    val checkIcon: String = "",
-    val mapIcon: String = "",
-    val visibleIcon: String = "",
-    val invisibleIcon: String = "",
+    val back: String = "",
+    val uncheck: String = "",
+    val check: String = "",
+    val map: String = "",
+    val visible: String = "",
+    val invisible: String = "",
+    val dateFilter: String = "",
+    val scrollTop: String = ""
 )
 
 val LocalDrawable = staticCompositionLocalOf { CustomDrawable() }
@@ -40,9 +46,10 @@ const val LOGO = "composeRes/images/ic_splash_logo.png"
 const val IC_BACK_ICON = "composeRes/images/ic_back.xml"
 const val IC_UNCHECK_ICON = "composeRes/images/ic_check_un.xml"
 const val IC_CHECK_ICON = "composeRes/images/ic_check.xml"
-const val ic_MAP = "composeRes/images/ic_map.xml"
-const val ic_VISIBLE = "composeRes/images/ic_visible.xml"
-const val ic_INVISIBLE = "composeRes/images/ic_invisible.xml"
+const val IC_MAP = "composeRes/images/ic_map.xml"
+const val IC_VISIBLE = "composeRes/images/ic_visible.xml"
+const val IC_INVISIBLE = "composeRes/images/ic_invisible.xml"
+const val IC_DATE_FILTER = "composeRes/images/ic_date_filter.xml"
 
 /*              亮色            */
 const val BG_SPLASH_LIGHT = "composeRes/images/bg_splash_light.png"
@@ -50,6 +57,7 @@ const val BG_SPLASH_LIGHT_LARGE = "composeRes/images/bg_splash_light_large.jpeg"
 const val BG_SPLASH_LIGHT_GUIDE1 = "composeRes/images/ic_guide_1.png"
 const val BG_SPLASH_LIGHT_GUIDE2 = "composeRes/images/ic_guide_2.png"
 const val BG_SPLASH_LIGHT_GUIDE3 = "composeRes/images/ic_guide_3.png"
+const val IC_SCROLL_TOP = "composeRes/images/ic_scroll_top.png"
 
 /*              暗色            */
 const val BG_SPLASH_DARK = "composeRes/images/bg_splash_dark.png"
@@ -57,6 +65,7 @@ const val BG_SPLASH_DARK_LARGE = "composeRes/images/bg_splash_dark_large.jpeg"
 const val BG_SPLASH_DARK_GUIDE1 = "composeRes/images/ic_guide_1_dark.png"
 const val BG_SPLASH_DARK_GUIDE2 = "composeRes/images/ic_guide_2_dark.png"
 const val BG_SPLASH_DARK_GUIDE3 = "composeRes/images/ic_guide_3_dark.png"
+const val IC_SCROLL_TOP_DARK = "composeRes/images/ic_scroll_top_dark.png"
 
 /**
  * 自定义亮色主题资源
@@ -68,12 +77,14 @@ val LedgerLightDrawable = CustomDrawable(
     guide1 = BG_SPLASH_LIGHT_GUIDE1,
     guide2 = BG_SPLASH_LIGHT_GUIDE2,
     guide3 = BG_SPLASH_LIGHT_GUIDE3,
-    backIcon = IC_BACK_ICON,
-    uncheckIcon = IC_UNCHECK_ICON,
-    checkIcon = IC_CHECK_ICON,
-    mapIcon = ic_MAP,
-    visibleIcon = ic_VISIBLE,
-    invisibleIcon = ic_INVISIBLE
+    back = IC_BACK_ICON,
+    uncheck = IC_UNCHECK_ICON,
+    check = IC_CHECK_ICON,
+    map = IC_MAP,
+    visible = IC_VISIBLE,
+    invisible = IC_INVISIBLE,
+    dateFilter = IC_DATE_FILTER,
+    scrollTop = IC_SCROLL_TOP
 )
 
 /**
@@ -86,10 +97,12 @@ val LedgerDarkDrawable = CustomDrawable(
     guide1 = BG_SPLASH_DARK_GUIDE1,
     guide2 = BG_SPLASH_DARK_GUIDE2,
     guide3 = BG_SPLASH_DARK_GUIDE3,
-    backIcon = IC_BACK_ICON,
-    uncheckIcon = IC_UNCHECK_ICON,
-    checkIcon = IC_CHECK_ICON,
-    mapIcon = ic_MAP,
-    visibleIcon = ic_VISIBLE,
-    invisibleIcon = ic_INVISIBLE
+    back = IC_BACK_ICON,
+    uncheck = IC_UNCHECK_ICON,
+    check = IC_CHECK_ICON,
+    map = IC_MAP,
+    visible = IC_VISIBLE,
+    invisible = IC_INVISIBLE,
+    dateFilter = IC_DATE_FILTER,
+    scrollTop = IC_SCROLL_TOP_DARK
 )

@@ -1,5 +1,8 @@
 package ui.widget
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -17,18 +20,26 @@ import ui.theme.LocalColor
  * 全局使用的加载对话框
  */
 @Composable
-fun LoadingDialog(){
-    Dialog(
-        onDismissRequest = { },
-        DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(100.dp)
-                .background(LocalColor.current.surface, shape = RoundedCornerShape(8.dp))
+fun LoadingDialog(
+    visible: Boolean = false
+){
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ){
+        Dialog(
+            onDismissRequest = { },
+            DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) {
-            CircularProgressIndicator()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(LocalColor.current.surface, shape = RoundedCornerShape(8.dp))
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 }

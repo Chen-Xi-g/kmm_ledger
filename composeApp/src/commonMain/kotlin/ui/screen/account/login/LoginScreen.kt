@@ -55,7 +55,6 @@ import ui.widget.BottomOutlineInput
 import ui.widget.FillGradationButton
 import ui.widget.LoadingDialog
 import ui.widget.LogoTextWidget
-import ui.widget.Toast
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -81,7 +80,7 @@ fun LoginScreen(
                 }
             ) {
                 Icon(
-                    painter = painterResource(LocalDrawable.current.backIcon),
+                    painter = painterResource(LocalDrawable.current.back),
                     contentDescription = Res.strings.str_back,
                     tint = LocalColor.current.backIcon
                 )
@@ -89,13 +88,7 @@ fun LoginScreen(
             LoginScreenContent(component, state, component::onEvent)
         }
     }
-    AnimatedVisibility(
-        visible = state.isLoading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ){
-        LoadingDialog()
-    }
+    LoadingDialog(state.isLoading)
 }
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalEncodingApi::class)
@@ -309,7 +302,7 @@ private fun LoginScreenContent(
                     }
                 ){
                     Icon(
-                        painter = painterResource(LocalDrawable.current.uncheckIcon),
+                        painter = painterResource(LocalDrawable.current.uncheck),
                         contentDescription = null,
                         tint = LocalColor.current.themePrimary
                     )
@@ -319,7 +312,7 @@ private fun LoginScreenContent(
                         exit = fadeOut()
                     ){
                         Icon(
-                            painter = painterResource(LocalDrawable.current.checkIcon),
+                            painter = painterResource(LocalDrawable.current.check),
                             contentDescription = null,
                             tint = LocalColor.current.themePrimary
                         )

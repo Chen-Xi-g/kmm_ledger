@@ -27,7 +27,7 @@ fun AddScreen(
         modifier = Modifier.fillMaxSize()
             .safeArea()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
+        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
             AddContent(state, component::onEvent)
         } else {
             AddContentLarge(state, component::onEvent)

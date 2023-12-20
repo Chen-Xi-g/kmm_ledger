@@ -53,7 +53,7 @@ fun LedgerTitle(
             }
         ) {
             Icon(
-                painter = painterResource(LocalDrawable.current.backIcon),
+                painter = painterResource(LocalDrawable.current.back),
                 contentDescription = Res.strings.str_back,
                 tint = LocalColor.current.backIcon
             )

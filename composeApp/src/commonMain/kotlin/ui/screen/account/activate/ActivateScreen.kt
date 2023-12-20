@@ -1,6 +1,5 @@
 package ui.screen.account.activate
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -61,7 +60,7 @@ fun ActivateScreen(
                 }
             ) {
                 Icon(
-                    painter = painterResource(LocalDrawable.current.backIcon),
+                    painter = painterResource(LocalDrawable.current.back),
                     contentDescription = Res.strings.str_back,
                     tint = LocalColor.current.backIcon
                 )
@@ -73,9 +72,7 @@ fun ActivateScreen(
             )
         }
     }
-    AnimatedVisibility(state.isLoading){
-        LoadingDialog()
-    }
+    LoadingDialog(state.isLoading)
 }
 
 @OptIn(ExperimentalEncodingApi::class)

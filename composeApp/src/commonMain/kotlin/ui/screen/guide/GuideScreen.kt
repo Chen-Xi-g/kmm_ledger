@@ -67,7 +67,7 @@ fun GuideScreen(
             HorizontalPager(
                 state = state
             ) {
-                if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
+                if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
                     GuideItem(it)
                 } else {
                     GuideItemLarge(it)

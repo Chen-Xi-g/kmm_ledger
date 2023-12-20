@@ -43,11 +43,6 @@ fun LedgerTheme(
         }
     ) {
         CompositionLocalProvider(
-            // 字体不受系统大小印象
-            LocalDensity provides Density(
-                density = LocalDensity.current.density,
-                fontScale = 1F
-            ),
             // 自定义颜色
             LocalColor provides if (darkTheme) {
                 LedgerDarkColorScheme

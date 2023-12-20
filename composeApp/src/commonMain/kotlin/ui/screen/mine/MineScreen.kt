@@ -27,7 +27,7 @@ fun MineScreen(
         modifier = Modifier.fillMaxSize()
             .safeArea()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
+        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
             MineContent(state, component::onEvent)
         } else {
             MineContentLarge(state, component::onEvent)

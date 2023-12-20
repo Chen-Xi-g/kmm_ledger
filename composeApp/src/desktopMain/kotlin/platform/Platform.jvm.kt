@@ -46,3 +46,7 @@ actual fun goHome(){
     // 关闭应用
     exitProcess(0)
 }
+
+actual fun String.format(vararg args: Any?): String {
+    return java.lang.String.format(this, *args)
+}

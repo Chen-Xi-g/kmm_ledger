@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
 import core.navigation.BaseComponent
 import kotlinx.serialization.Serializable
+import platform.log
 import ui.screen.add.AddVM
 import ui.screen.home.HomeVM
 import ui.screen.mine.MineVM
@@ -23,13 +24,7 @@ import ui.widget.ToastState
 class MainVM(
     componentContext: ComponentContext,
     private val onToast: (String?, ToastState.ToastStyle) -> Unit
-): BaseComponent<MainState, MainEvent, MainEffect>(componentContext) {
-
-    private val list = listOf(
-        Configuration.Home,
-        Configuration.Add,
-        Configuration.Mine
-    )
+) : BaseComponent<MainState, MainEvent, MainEffect>(componentContext) {
 
     private val navigation = PagesNavigation<Configuration>()
     val pages = childPages(
@@ -37,7 +32,11 @@ class MainVM(
         serializer = Configuration.serializer(),
         initialPages = {
             Pages(
-                items = list,
+                items = listOf(
+                    Configuration.Home,
+                    Configuration.Add,
+                    Configuration.Mine
+                ),
                 selectedIndex = 0
             )
         },
@@ -55,7 +54,7 @@ class MainVM(
     private fun createChild(
         configuration: Configuration,
         componentContext: ComponentContext
-    ): Page{
+    ): Page {
         return when (configuration) {
             is Configuration.Home -> Page.Home(HomeVM(componentContext, onToast))
             is Configuration.Add -> Page.Add(AddVM(componentContext, onToast))
@@ -63,7 +62,8 @@ class MainVM(
         }
     }
 
-    fun selectPage(index: Int){
+    fun selectPage(index: Int) {
+        "当前index： $index".log()
         navigation.select(index)
     }
 

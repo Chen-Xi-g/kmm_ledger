@@ -40,7 +40,7 @@ val netClient = httpClient{
             host = Res.httpClient.server_host
             port = Res.httpClient.server_port
         }
-        header("token", "Bearer ${KeyRepository.token}")
+        header("Authorization", "Bearer ${KeyRepository.token}")
     }
     install(HttpTimeout){
         requestTimeoutMillis = 150000

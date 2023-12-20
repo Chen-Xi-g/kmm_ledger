@@ -1,12 +1,11 @@
 package core.domain.repository
 
 import core.data.api.NetApi
-import core.data.dto.AgreementDto
 import core.data.net.ResNet
 import core.domain.entity.CodeImageEntity
 
 /**
- * 账户相关接口
+ * 账户相关存储库
  *
  * @author 高国峰
  * @date 2023/12/16-01:08

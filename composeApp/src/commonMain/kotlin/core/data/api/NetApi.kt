@@ -1,6 +1,7 @@
 package core.data.api
 
 import core.utils.Res
+import core.utils.Res.httpClient.base_path
 
 /**
  * 网络请求接口
@@ -18,7 +19,7 @@ sealed class NetApi(val url: String) {
         /**
          * 获取验证码
          */
-        data object CodeImage : AccountApi(Res.httpClient.base_path + "captchaImage")
+        data object CodeImage : AccountApi("captchaImage".base_path)
 
         /**
          * 登录
@@ -33,7 +34,7 @@ sealed class NetApi(val url: String) {
             val password: String,
             val code: String,
             val uuid: String
-        ) : AccountApi(Res.httpClient.base_path + "login") {
+        ) : AccountApi("login".base_path) {
             fun toMap(): Map<String, String> {
                 return mapOf(
                     "username" to username,
@@ -59,7 +60,7 @@ sealed class NetApi(val url: String) {
             val password: String,
             val code: String,
             val uuid: String
-        ) : AccountApi(Res.httpClient.base_path + "register") {
+        ) : AccountApi("register".base_path) {
             fun toMap(): Map<String, String> {
                 return mapOf(
                     "username" to username,
@@ -86,7 +87,7 @@ sealed class NetApi(val url: String) {
             val confirmPassword: String,
             val code: String,
             val uuid: String
-        ) : AccountApi(Res.httpClient.base_path + "forgotPwd") {
+        ) : AccountApi( "forgotPwd".base_path) {
             fun toMap(): Map<String, String> {
                 return mapOf(
                     "username" to username,
@@ -109,7 +110,7 @@ sealed class NetApi(val url: String) {
             val username: String,
             val code: String,
             val uuid: String
-        ) : AccountApi(Res.httpClient.base_path + "sendEmailActivate") {
+        ) : AccountApi("sendEmailActivate".base_path) {
             fun toMap(): Map<String, String> {
                 return mapOf(
                     "username" to username,
@@ -124,7 +125,38 @@ sealed class NetApi(val url: String) {
          *
          * @property type 协议类型
          */
-        data class Agreement(val type: Int) : AccountApi(Res.httpClient.base_path + "agreement")
+        data class Agreement(val type: Int) : AccountApi("agreement".base_path)
     }
 
+    /**
+     * 账单相关接口
+     */
+    sealed class BillApi(url: String): NetApi(url){
+        /**
+         * 获取账单列表
+         *
+         * @param beginTime 开始时间 yyyy-MM-dd
+         * @param endTime 结束时间 yyyy-MM-dd
+         * @param billName 账单名称
+         * @param typeId 消费类型Id
+         * @param typeTag 消费类型标签
+         */
+        data class GetBill(
+            val beginTime: String? = null,
+            val endTime: String? = null,
+            val billName: String? = null,
+            val typeId: String? = null,
+            val typeTag: String? = null
+        ) : BillApi("getBill".base_path){
+            fun toMap(): Map<String, String?> {
+                return mapOf(
+                    "beginTime" to beginTime,
+                    "endTime" to endTime,
+                    "billName" to billName,
+                    "typeId" to typeId,
+                    "typeTag" to typeTag,
+                )
+            }
+        }
+    }
 }

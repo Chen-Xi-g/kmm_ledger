@@ -37,3 +37,8 @@ expect fun String.log()
  * 返回到桌面
  */
 expect fun goHome()
+
+/**
+ * 格式化字符串
+ */
+expect fun String.format(vararg args: Any?): String

@@ -14,7 +14,7 @@ import core.mappers.toCodeImageEntity
 import core.mappers.toToken
 
 /**
- * 账户相关接口实现
+ * 账户存储库实现
  *
  * @author 高国峰
  * @date 2023/12/16-01:11

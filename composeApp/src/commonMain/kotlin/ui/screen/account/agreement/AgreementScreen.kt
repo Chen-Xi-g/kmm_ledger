@@ -31,9 +31,7 @@ fun AgreementScreen(
     ) {
         AgreementContent(state, component::onEvent)
     }
-    AnimatedVisibility(visible = state.isLoading) {
-        LoadingDialog()
-    }
+    LoadingDialog(state.isLoading)
 }
 
 @Composable

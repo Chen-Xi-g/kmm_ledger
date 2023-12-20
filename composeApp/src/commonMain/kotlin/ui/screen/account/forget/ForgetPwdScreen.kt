@@ -1,6 +1,5 @@
 package ui.screen.account.forget
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +38,6 @@ import ui.widget.BottomOutlineInput
 import ui.widget.FillGradationButton
 import ui.widget.LoadingDialog
 import ui.widget.LogoTextWidget
-import ui.widget.Toast
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -65,7 +63,7 @@ fun ForgetPwdScreen(
                 }
             ) {
                 Icon(
-                    painter = painterResource(LocalDrawable.current.backIcon),
+                    painter = painterResource(LocalDrawable.current.back),
                     contentDescription = Res.strings.str_back,
                     tint = LocalColor.current.backIcon
                 )
@@ -73,9 +71,7 @@ fun ForgetPwdScreen(
             ForgetPwdContent(component, state, component::onEvent)
         }
     }
-    AnimatedVisibility(state.isLoading){
-        LoadingDialog()
-    }
+    LoadingDialog(state.isLoading)
 }
 
 @OptIn(ExperimentalEncodingApi::class)

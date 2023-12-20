@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -72,9 +73,11 @@ fun Toast(
         if (state.text.value.isNotBlank()) {
             toastState = true
             delay(if (state.text.value.length > 15) 3000 else 2000)
-            if (toastState)
+            if (toastState){
                 toastState = false
+            }
         }
+        state.text.value = ""
     }
     LaunchedEffect(state.text.value, transition.currentState, transition.isRunning) {
         if (!toastState && !transition.currentState && !transition.isRunning && state.text.value.isNotBlank()) {
@@ -110,7 +113,8 @@ fun Toast(
                 Text(
                     text = state.text.value,
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(15.dp)
+                    modifier = Modifier.padding(15.dp),
+                    color = Color.White
                 )
             }
         }

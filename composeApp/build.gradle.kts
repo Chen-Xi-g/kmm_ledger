@@ -68,6 +68,7 @@ kotlin {
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.content.negotiation)
                 api(libs.compose.webview.multiplatform)
+                implementation(libs.kamel.image)
             }
         }
         val iosMain by creating{

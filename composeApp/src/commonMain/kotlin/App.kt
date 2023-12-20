@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
@@ -31,6 +32,7 @@ import ui.screen.account.register.RegisterScreen
 import ui.screen.guide.GuideScreen
 import ui.screen.guide.splash.SplashScreen
 import ui.theme.LedgerTheme
+import ui.theme.LocalColor
 import ui.widget.Toast
 import ui.widget.ToastState
 import ui.widget.rememberToastState
@@ -46,7 +48,7 @@ fun App(root: RootComponent) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .autoCloseKeyboard(),
+                .autoCloseKeyboard()
         ) {
             val childStack by root.childStack.subscribeAsState()
             Children(

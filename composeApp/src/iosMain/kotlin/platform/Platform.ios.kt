@@ -18,6 +18,8 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimator
 import com.arkivanov.essenty.backhandler.BackHandler
 import org.jetbrains.skia.Image
+import platform.Foundation.NSString
+import platform.Foundation.stringWithFormat
 import platform.UIKit.UIDevice
 import platform.posix.exit
 
@@ -103,4 +105,29 @@ actual fun String.log(){
 actual fun goHome(){
     // 关闭应用
     exit(0)
+}
+
+actual fun String.format(vararg args: Any?): String {
+    var returnString = ""
+    val regEx = "%[\\d|.]*[sdf]|[%]".toRegex()
+    val singleFormats = regEx.findAll(this).map {
+        it.groupValues.first()
+    }.toList()
+    val newStrings = this.split(regEx)
+    for (i in 0 until args.count()) {
+        val arg = args[i]
+        returnString += when (arg) {
+            is Double -> {
+                NSString.stringWithFormat(newStrings[i] + singleFormats[i], args[i] as Double)
+            }
+            is Int -> {
+                NSString.stringWithFormat(newStrings[i] + singleFormats[i], args[i] as Int)
+            }
+            else -> {
+                NSString.stringWithFormat(newStrings[i] + "%@", args[i])
+            }
+        }
+    }
+
+    return returnString
 }

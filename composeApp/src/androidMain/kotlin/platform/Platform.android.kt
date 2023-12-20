@@ -55,3 +55,7 @@ actual fun goHome(){
     // 启动 Intent 返回桌面
     BaseApp.instance.startActivity(intent)
 }
+
+actual fun String.format(vararg args: Any?): String {
+    return java.lang.String.format(this, *args)
+}
