@@ -28,7 +28,8 @@ data class MainState(
         Menu(selectIcon = Icons.Filled.Home,unSelectIcon = Icons.Outlined.Home, title = "首页"),
         Menu(selectIcon = Icons.Filled.Add,unSelectIcon = Icons.Outlined.Add, title = "新增账单"),
         Menu(selectIcon = Icons.Filled.Person,unSelectIcon = Icons.Outlined.Person, title = "我的")
-    )
+    ),
+    val selectIndex: Int = 0
 ): UiState
 
 /**

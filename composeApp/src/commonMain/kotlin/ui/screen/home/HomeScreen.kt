@@ -166,189 +166,21 @@ private fun HomeContent(
         ) {
             // 忞鹿记账
             stickyHeader(key = "topHeader") {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .background(LocalColor.current.surface)
-                        .padding(vertical = 10.dp, horizontal = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Text(
-                        text = Res.strings.str_app_name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .wrapContentSize()
-                            .background(LocalColor.current.card, shape = CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(horizontal = 7.dp, vertical = 3.dp),
-                            text = "7日待还100单",
-                            fontSize = 11.sp,
-                            lineHeight = 15.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Start
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    IconButton(
-                        modifier = Modifier
-                            .size(25.dp),
-                        onClick = { }
-                    ) {
-                        Icon(
-                            painter = painterResource(LocalDrawable.current.map),
-                            contentDescription = Res.strings.str_bill_map,
-                            tint = LocalColor.current.textTitle
-                        )
-                    }
-                }
+                HomeHeaderContent()
             }
             // 账单卡片
             item(key = "billCard") {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 15.dp, end = 15.dp, top = 5.dp)
-                        .fillMaxWidth()
-                        .gradationBrush(RoundedCornerShape(10.dp))
-                        .padding(10.dp)
-                ) {
-                    // 账单卡片标题
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "账单卡片",
-                            fontSize = 16.sp,
-                            color = Color.White
-                        )
-                        IconButton(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .size(20.dp),
-                            onClick = { }
-                        ) {
-                            Icon(
-                                painter = painterResource(LocalDrawable.current.visible),
-                                contentDescription = Res.strings.str_bill_map,
-                                tint = Color.White
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    // 金额
-                    Text(
-                        text = "10000000000000.00${Res.strings.str_money}",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    // 支出收入数据
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.weight(0.5F),
-                            text = "本月支出：1000000000000.00${Res.strings.str_money}",
-                            fontSize = 12.sp,
-                            color = Color.White
-                        )
-                        Text(
-                            modifier = Modifier.weight(0.5F),
-                            text = "本月收入：1000000000000.00${Res.strings.str_money}",
-                            fontSize = 12.sp,
-                            color = Color.White
-                        )
-                    }
-                }
+                HomeCardContent()
                 Spacer(modifier = Modifier.height(25.dp))
             }
             // 账单详情
             stickyHeader(key = "detailHeader") {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .background(LocalColor.current.surface)
-                            .padding(vertical = 10.dp, horizontal = 15.dp),
-                        text = str_bill_detail,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    IconButton(
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .size(35.dp)
-                            .padding(5.dp),
-                        onClick = { onEvent(HomeEvent.ToggleBottomSheet) }
-                    ) {
-                        Icon(
-                            painter = painterResource(LocalDrawable.current.dateFilter),
-                            contentDescription = Res.strings.str_bill_date_filter,
-                            tint = LocalColor.current.textPrimary
-                        )
-                    }
-                }
+                HomeDetailHeaderContent(onEvent)
             }
             // 列表数据
             if (list.isEmpty()) {
                 item("empty") {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 15.dp)
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .background(
-                                color = LocalColor.current.card,
-                                shape = RoundedCornerShape(14.dp)
-                            ).padding(vertical = 10.dp, horizontal = 15.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier,
-                            text = str_no_bill,
-                            fontSize = 16.sp,
-                            color = LocalColor.current.textPrimary
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 10.dp)
-                                .wrapContentSize()
-                                .background(LocalColor.current.surface, shape = CircleShape)
-                                .align(Alignment.End),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 7.dp, vertical = 3.dp),
-                                text = str_add_bill,
-                                fontSize = 11.sp,
-                                lineHeight = 15.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Start
-                            )
-                        }
-                    }
+                    HomeItemEmptyContent()
                 }
             } else {
                 items(list.size) { index ->
@@ -391,6 +223,209 @@ private fun HomeContent(
                     contentDescription = Res.strings.str_scroll_to_top,
                 )
             }
+        }
+    }
+}
+
+/**
+ * 首页列表为空时的布局
+ */
+@Composable
+private fun HomeItemEmptyContent() {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 15.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(
+                color = LocalColor.current.card,
+                shape = RoundedCornerShape(14.dp)
+            ).padding(vertical = 10.dp, horizontal = 15.dp)
+    ) {
+        Text(
+            modifier = Modifier,
+            text = str_no_bill,
+            fontSize = 16.sp,
+            color = LocalColor.current.textPrimary
+        )
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .wrapContentSize()
+                .background(LocalColor.current.surface, shape = CircleShape)
+                .align(Alignment.End),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 7.dp, vertical = 3.dp),
+                text = str_add_bill,
+                fontSize = 11.sp,
+                lineHeight = 15.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start
+            )
+        }
+    }
+}
+
+/**
+ * 首页明细列表头部
+ */
+@Composable
+@OptIn(ExperimentalResourceApi::class)
+private fun HomeDetailHeaderContent(onEvent: (HomeEvent) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier
+                .background(LocalColor.current.surface)
+                .padding(vertical = 10.dp, horizontal = 15.dp),
+            text = str_bill_detail,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        IconButton(
+            modifier = Modifier
+                .padding(end = 10.dp)
+                .size(35.dp)
+                .padding(5.dp),
+            onClick = { onEvent(HomeEvent.ToggleBottomSheet) }
+        ) {
+            Icon(
+                painter = painterResource(LocalDrawable.current.dateFilter),
+                contentDescription = Res.strings.str_bill_date_filter,
+                tint = LocalColor.current.textPrimary
+            )
+        }
+    }
+}
+
+/**
+ * 首页账单卡片
+ */
+@Composable
+@OptIn(ExperimentalResourceApi::class)
+private fun HomeCardContent() {
+    Column(
+        modifier = Modifier
+            .padding(start = 15.dp, end = 15.dp, top = 5.dp)
+            .fillMaxWidth()
+            .gradationBrush(RoundedCornerShape(10.dp))
+            .padding(10.dp)
+    ) {
+        // 账单卡片标题
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "账单卡片",
+                fontSize = 16.sp,
+                color = Color.White
+            )
+            IconButton(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(20.dp),
+                onClick = { }
+            ) {
+                Icon(
+                    painter = painterResource(LocalDrawable.current.visible),
+                    contentDescription = Res.strings.str_bill_map,
+                    tint = Color.White
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        // 金额
+        Text(
+            text = "10000000000000.00${Res.strings.str_money}",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        // 支出收入数据
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(0.5F),
+                text = "本月支出：1000000000000.00${Res.strings.str_money}",
+                fontSize = 12.sp,
+                color = Color.White
+            )
+            Text(
+                modifier = Modifier.weight(0.5F),
+                text = "本月收入：1000000000000.00${Res.strings.str_money}",
+                fontSize = 12.sp,
+                color = Color.White
+            )
+        }
+    }
+}
+
+/**
+ * 首页头部
+ */
+@Composable
+@OptIn(ExperimentalResourceApi::class)
+private fun HomeHeaderContent() {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .background(LocalColor.current.surface)
+            .padding(vertical = 10.dp, horizontal = 15.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            text = Res.strings.str_app_name,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .wrapContentSize()
+                .background(LocalColor.current.card, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 7.dp, vertical = 3.dp),
+                text = "7日待还100单",
+                fontSize = 11.sp,
+                lineHeight = 15.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            modifier = Modifier
+                .size(25.dp),
+            onClick = { }
+        ) {
+            Icon(
+                painter = painterResource(LocalDrawable.current.map),
+                contentDescription = Res.strings.str_bill_map,
+                tint = LocalColor.current.textTitle
+            )
         }
     }
 }
@@ -626,26 +661,10 @@ private fun HomeDetailChild(
 private fun HomeDetailChildItem(
     item: BillDetailListEntity
 ) {
-    val selected = remember { mutableStateOf(false) }
-    val scale = animateFloatAsState(
-        targetValue = if (selected.value) 0.95f else 1f
-    )
-
     Row(
         modifier = Modifier
-            .scale(scale.value)
             .height(73.dp)
             .fillMaxWidth()
-            .pointerInput(key1 = "scale"){
-                // 持续监听指针事件
-                while (true) {
-                    val event = awaitPointerEventScope {
-                        awaitPointerEvent()
-                    }
-                    // 监听按下事件和抬起事件
-                    selected.value = event.changes.any { it.pressed }
-                }
-            }
             .padding(horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)

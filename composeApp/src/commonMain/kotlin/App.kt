@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import core.navigation.IRootComponent
 import core.navigation.RootComponent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -55,18 +56,18 @@ fun App(root: RootComponent) {
                 stack = childStack,
                 animation = backAnimation(
                     backHandler = root.backHandler,
-                    onBack = root::onBackClicked
+                    onBack = root::onBack
                 )
             ){ child ->
                 when(val instance = child.instance){
-                    is RootComponent.Child.Guide -> GuideScreen(instance.component)
-                    is RootComponent.Child.Main -> MainScreen(instance.component)
-                    is RootComponent.Child.Splash -> SplashScreen(instance.component)
-                    is RootComponent.Child.Login -> LoginScreen(instance.component)
-                    is RootComponent.Child.Register -> RegisterScreen(instance.component)
-                    is RootComponent.Child.ForgetPwd -> ForgetPwdScreen(instance.component)
-                    is RootComponent.Child.ActivateAccount -> ActivateScreen(instance.component)
-                    is RootComponent.Child.Agreement -> AgreementScreen(instance.component)
+                    is IRootComponent.Child.Guide -> GuideScreen(instance.component)
+                    is IRootComponent.Child.Main -> MainScreen(instance.component)
+                    is IRootComponent.Child.Splash -> SplashScreen(instance.component)
+                    is IRootComponent.Child.Login -> LoginScreen(instance.component)
+                    is IRootComponent.Child.Register -> RegisterScreen(instance.component)
+                    is IRootComponent.Child.ForgetPwd -> ForgetPwdScreen(instance.component)
+                    is IRootComponent.Child.ActivateAccount -> ActivateScreen(instance.component)
+                    is IRootComponent.Child.Agreement -> AgreementScreen(instance.component)
                 }
             }
         }

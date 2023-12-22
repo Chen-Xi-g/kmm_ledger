@@ -52,7 +52,6 @@ object Res {
         const val str_privacy = "《隐私政策》"
         const val str_and = "和"
         const val str_bill_detail = "账单详情"
-        const val str_bill_month = "本月账单"
         const val str_bill_map = "账单地图"
         const val str_bill_date_filter = "账单日期筛选"
         const val str_pack_up = "收起"
@@ -67,6 +66,9 @@ object Res {
         const val str_account_type = "账户类型"
         const val str_query = "查询"
         const val str_no_more = "没有更多了"
+        const val str_income = "收入"
+        const val str_expenditure = "支出"
+        const val str_next_step = "下一步"
 
 
         val String.str_format_income

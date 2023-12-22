@@ -2,6 +2,7 @@ package core.data.net
 
 import Greeting
 import core.data.dto.BaseDto
+import core.utils.GlobalNavigator
 import core.utils.KeyRepository
 import core.utils.Res
 import io.ktor.client.call.body
@@ -76,7 +77,11 @@ suspend inline fun <reified T> post(url: String, body: Any? = null): ResNet<T> {
         if (response.isSuccess()) {
             ResNet.Success(response.data,response.msg)
         } else {
-            ResNet.Error(response.msg, response.code, response.data)
+            if (response.code == 401){
+                // 登录失效, 重新登录
+                GlobalNavigator.login()
+            }
+            ResNet.Error(response.msg ?: "未知异常，请重试", response.code, response.data)
         }
     } catch (e: Exception) {
         e.toResNet()

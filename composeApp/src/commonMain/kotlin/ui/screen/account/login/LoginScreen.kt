@@ -91,14 +91,12 @@ fun LoginScreen(
     LoadingDialog(state.isLoading)
 }
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalEncodingApi::class)
 @Composable
 private fun LoginScreenContent(
     component: LoginVM,
     state: LoginState,
     onEvent: (LoginEvent) -> Unit
 ) {
-    var forgetSize by remember { mutableStateOf(IntSize.Zero) }
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -111,239 +109,13 @@ private fun LoginScreenContent(
             )
         }
         item("input") {
-            // 用户名
-            Spacer(modifier = Modifier.height(30.dp))
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_username,
-                value = component.username
-            ) {
-                component.updateUsername(it)
-            }
-            if (state.errorUsername.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorUsername,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 密码
-            Box(
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth()
-            ) {
-                BottomOutlineInput(
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .fillMaxWidth()
-                        .padding(end = with(LocalDensity.current) { forgetSize.width.toDp() }),
-                    label = Res.strings.str_hint_login_password,
-                    value = component.password,
-                    type = 1
-                ) {
-                    component.updatePassword(it)
-                }
-                Text(
-                    modifier = Modifier
-                        .clickable { onEvent(LoginEvent.ForgetPassword) }
-                        .padding(vertical = 12.dp)
-                        .align(Alignment.CenterEnd)
-                        .onSizeChanged {
-                            forgetSize = it
-                        },
-                    text = Res.strings.str_forget_password,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.themePrimary
-                )
-            }
-            if (state.errorPassword.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorPassword,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 验证码
-            Row(
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BottomOutlineInput(
-                    modifier = Modifier
-                        .weight(1F),
-                    label = Res.strings.str_hint_login_code,
-                    value = component.code,
-                    type = 2
-                ) {
-                    component.updateCode(it)
-                }
-                Box(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(width = 120.dp, height = 45.dp)
-                        .border(
-                            width = 2.dp,
-                            color = LocalColor.current.themePrimary,
-                            shape = RoundedCornerShape(4.dp)
-                        ).clickable { onEvent(LoginEvent.RefreshCode) }
-                ) {
-                    if (state.codeImg.isNotEmpty()) {
-                        Image(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(4.dp)),
-                            bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
-                            contentDescription = Res.strings.str_code,
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-                }
-            }
-            if (!state.errorCaptcha.isNullOrBlank()) {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorCaptcha,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
+            LoginInputContent(component, state, onEvent)
         }
         item("start") {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier
-                        .clickable { onEvent(LoginEvent.ActivateAccount(username)) }
-                        .padding(vertical = 15.dp),
-                    text = Res.strings.str_activate_account,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.themePrimary
-                )
-                Text(
-                    modifier = Modifier
-                        .clickable { onEvent(LoginEvent.Register(username)) }
-                        .padding(vertical = 15.dp),
-                    text = Res.strings.str_register_account,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.themePrimary
-                )
-            }
-            FillGradationButton(
-                modifier = Modifier.padding(horizontal = 25.dp),
-                text = Res.strings.str_login
-            ) {
-                onEvent(LoginEvent.Submit)
-            }
+            LoginStartContent(onEvent)
         }
         item("terms") {
-            Spacer(modifier = Modifier.height(50.dp))
-            val clickableText = buildAnnotatedString {
-
-                append(Res.strings.str_read_agree)
-
-                pushStringAnnotation(
-                    tag = "UserAgreement",
-                    annotation = "UserAgreement"
-                )
-                withStyle(
-                    style = SpanStyle(
-                        color = LocalColor.current.themePrimary,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append(Res.strings.str_terms)
-                }
-                pop()
-
-                append(Res.strings.str_and)
-
-                pushStringAnnotation(
-                    tag = "PrivacyAgreement",
-                    annotation = "PrivacyAgreement"
-                )
-                withStyle(
-                    style = SpanStyle(
-                        color = LocalColor.current.themePrimary,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append(Res.strings.str_privacy)
-                }
-                pop()
-
-            }
-            /*条款*/
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                IconButton(
-                    modifier = Modifier.size(30.dp).padding(5.dp),
-                    onClick = {
-                        onEvent(LoginEvent.UpdateTerms(!state.isAcceptedTerms))
-                    }
-                ){
-                    Icon(
-                        painter = painterResource(LocalDrawable.current.uncheck),
-                        contentDescription = null,
-                        tint = LocalColor.current.themePrimary
-                    )
-                    AnimatedVisibility(
-                        visible = state.isAcceptedTerms,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ){
-                        Icon(
-                            painter = painterResource(LocalDrawable.current.check),
-                            contentDescription = null,
-                            tint = LocalColor.current.themePrimary
-                        )
-                    }
-                }
-                ClickableText(
-                    text = clickableText,
-                    onClick = {
-                        clickableText.getStringAnnotations(
-                            tag = "UserAgreement",
-                            start = it,
-                            end = it
-                        ).firstOrNull()?.let { _ ->
-                            // 用户协议
-                            onEvent(LoginEvent.UserAgreement)
-                        }
-                        clickableText.getStringAnnotations(
-                            tag = "PrivacyAgreement",
-                            start = it,
-                            end = it
-                        ).firstOrNull()?.let { _ ->
-                            // 隐私政策
-                            onEvent(LoginEvent.PrivacyPolicy)
-                        }
-                    },
-                    style = TextStyle.Default.copy(
-                        color = LocalColor.current.textPrimary,
-                        fontSize = 12.sp
-                    )
-                )
-            }
+            LoginTermsContent(onEvent, state)
         }
         item("logo"){
             Spacer(modifier = Modifier.height(120.dp))
@@ -355,5 +127,264 @@ private fun LoginScreenContent(
             )
             Spacer(modifier = Modifier.height(50.dp))
         }
+    }
+}
+
+/**
+ * 登录条款区内容
+ */
+@Composable
+@OptIn(ExperimentalResourceApi::class)
+private fun LoginTermsContent(
+    onEvent: (LoginEvent) -> Unit,
+    state: LoginState
+) {
+    Spacer(modifier = Modifier.height(50.dp))
+    val clickableText = buildAnnotatedString {
+
+        append(Res.strings.str_read_agree)
+
+        pushStringAnnotation(
+            tag = "UserAgreement",
+            annotation = "UserAgreement"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = LocalColor.current.themePrimary,
+                fontWeight = FontWeight.Bold
+            )
+        ) {
+            append(Res.strings.str_terms)
+        }
+        pop()
+
+        append(Res.strings.str_and)
+
+        pushStringAnnotation(
+            tag = "PrivacyAgreement",
+            annotation = "PrivacyAgreement"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = LocalColor.current.themePrimary,
+                fontWeight = FontWeight.Bold
+            )
+        ) {
+            append(Res.strings.str_privacy)
+        }
+        pop()
+
+    }
+    /*条款*/
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        IconButton(
+            modifier = Modifier.size(30.dp).padding(5.dp),
+            onClick = {
+                onEvent(LoginEvent.UpdateTerms(!state.isAcceptedTerms))
+            }
+        ) {
+            Icon(
+                painter = painterResource(LocalDrawable.current.uncheck),
+                contentDescription = null,
+                tint = LocalColor.current.themePrimary
+            )
+            AnimatedVisibility(
+                visible = state.isAcceptedTerms,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Icon(
+                    painter = painterResource(LocalDrawable.current.check),
+                    contentDescription = null,
+                    tint = LocalColor.current.themePrimary
+                )
+            }
+        }
+        ClickableText(
+            text = clickableText,
+            onClick = {
+                clickableText.getStringAnnotations(
+                    tag = "UserAgreement",
+                    start = it,
+                    end = it
+                ).firstOrNull()?.let { _ ->
+                    // 用户协议
+                    onEvent(LoginEvent.UserAgreement)
+                }
+                clickableText.getStringAnnotations(
+                    tag = "PrivacyAgreement",
+                    start = it,
+                    end = it
+                ).firstOrNull()?.let { _ ->
+                    // 隐私政策
+                    onEvent(LoginEvent.PrivacyPolicy)
+                }
+            },
+            style = TextStyle.Default.copy(
+                color = LocalColor.current.textPrimary,
+                fontSize = 12.sp
+            )
+        )
+    }
+}
+
+/**
+ * 登录跳转区内容
+ */
+@Composable
+private fun LoginStartContent(onEvent: (LoginEvent) -> Unit) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier
+                .clickable { onEvent(LoginEvent.ActivateAccount(username)) }
+                .padding(vertical = 15.dp),
+            text = Res.strings.str_activate_account,
+            fontSize = 12.sp,
+            color = LocalColor.current.themePrimary
+        )
+        Text(
+            modifier = Modifier
+                .clickable { onEvent(LoginEvent.Register(username)) }
+                .padding(vertical = 15.dp),
+            text = Res.strings.str_register_account,
+            fontSize = 12.sp,
+            color = LocalColor.current.themePrimary
+        )
+    }
+    FillGradationButton(
+        modifier = Modifier.padding(horizontal = 25.dp),
+        text = Res.strings.str_login
+    ) {
+        onEvent(LoginEvent.Submit)
+    }
+}
+
+/**
+ * 登录输入框内容
+ */
+@OptIn(ExperimentalEncodingApi::class)
+@Composable
+private fun LoginInputContent(
+    component: LoginVM,
+    state: LoginState,
+    onEvent: (LoginEvent) -> Unit
+) {
+    var forgetSize by remember { mutableStateOf(IntSize.Zero) }
+    Spacer(modifier = Modifier.height(30.dp))
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_username,
+        value = component.username
+    ) {
+        component.updateUsername(it)
+    }
+    if (state.errorUsername.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorUsername,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 密码
+    Box(
+        modifier = Modifier
+            .padding(start = 25.dp, end = 25.dp)
+            .fillMaxWidth()
+    ) {
+        BottomOutlineInput(
+            modifier = Modifier
+                .padding(end = 10.dp)
+                .fillMaxWidth()
+                .padding(end = with(LocalDensity.current) { forgetSize.width.toDp() }),
+            label = Res.strings.str_hint_login_password,
+            value = component.password,
+            type = 1
+        ) {
+            component.updatePassword(it)
+        }
+        Text(
+            modifier = Modifier
+                .clickable { onEvent(LoginEvent.ForgetPassword) }
+                .padding(vertical = 12.dp)
+                .align(Alignment.CenterEnd)
+                .onSizeChanged {
+                    forgetSize = it
+                },
+            text = Res.strings.str_forget_password,
+            fontSize = 12.sp,
+            color = LocalColor.current.themePrimary
+        )
+    }
+    if (state.errorPassword.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorPassword,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 验证码
+    Row(
+        modifier = Modifier
+            .padding(start = 25.dp, end = 25.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BottomOutlineInput(
+            modifier = Modifier
+                .weight(1F),
+            label = Res.strings.str_hint_login_code,
+            value = component.code,
+            type = 2
+        ) {
+            component.updateCode(it)
+        }
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(width = 120.dp, height = 45.dp)
+                .border(
+                    width = 2.dp,
+                    color = LocalColor.current.themePrimary,
+                    shape = RoundedCornerShape(4.dp)
+                ).clickable { onEvent(LoginEvent.RefreshCode) }
+        ) {
+            if (state.codeImg.isNotEmpty()) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(4.dp)),
+                    bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
+                    contentDescription = Res.strings.str_code,
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+        }
+    }
+    if (!state.errorCaptcha.isNullOrBlank()) {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorCaptcha,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
     }
 }

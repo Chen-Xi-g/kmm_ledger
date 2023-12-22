@@ -7,6 +7,7 @@ import core.domain.entity.TypeEntity
 import core.navigation.UiEffect
 import core.navigation.UiEvent
 import core.navigation.UiState
+import kotlinx.serialization.Serializable
 
 /**
  * 首页状态
@@ -23,9 +24,9 @@ import core.navigation.UiState
  * @param currentTypeIndex 当前选中的类型索引
  * @param currentDateIndex 当前选中的日期索引
  * @param currentAccountIndex 当前选中的账户索引
- * @param error 错误信息
  * @param isLoading 是否正在加载
  */
+@Serializable
 data class HomeState(
     val visibleFilter: Boolean = false,
     val visibleMonthPicker: Boolean = false,
@@ -48,7 +49,6 @@ data class HomeState(
     val currentTypeIndex: Int = 0,
     val currentDateIndex: Int = 1,
     val currentAccountIndex: Int = 0,
-    val error: String? = null,
     val isLoading: Boolean = false,
 ) : UiState
 

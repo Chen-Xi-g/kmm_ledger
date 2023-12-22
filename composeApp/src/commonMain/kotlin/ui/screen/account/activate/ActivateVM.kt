@@ -11,6 +11,7 @@ import core.domain.repository.AccountRepository
 import core.domain.user_case.ValidationCode
 import core.domain.user_case.ValidationUsername
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
 import ui.widget.ToastState
@@ -23,8 +24,7 @@ import ui.widget.ToastState
  */
 class ActivateVM(
     componentContext: ComponentContext,
-    private val goBack: () -> Unit,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
+    private val navigationListener: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationCode: ValidationCode = ValidationCode()
@@ -54,7 +54,7 @@ class ActivateVM(
     override fun onEvent(event: ActivateEvent) {
         when(event){
             ActivateEvent.GoBack -> {
-                goBack()
+                navigationListener.onBack()
             }
             ActivateEvent.Submit -> {
                 submit()
@@ -129,7 +129,7 @@ class ActivateVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastError(resp.msg)
+                    navigationListener.toastError(resp.msg)
                     getCodeImage()
                 }
                 is ResNet.Success -> {
@@ -138,7 +138,7 @@ class ActivateVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastSuccess(resp.msg)
+                    navigationListener.toastSuccess(resp.msg)
                 }
             }
         }
@@ -151,7 +151,7 @@ class ActivateVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    onToast.toastError(resp.msg)
+                    navigationListener.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {
@@ -160,7 +160,7 @@ class ActivateVM(
                             uuid = resp.data?.uuid ?: ""
                         )
                     }
-                    onToast.toastSuccess(resp.msg)
+                    navigationListener.toastSuccess(resp.msg)
                 }
             }
         }

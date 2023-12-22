@@ -2,6 +2,7 @@ package core.domain.entity
 
 import core.utils.currentLocalDate
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 
 /**
  * 账单列表的页面数据
@@ -12,6 +13,7 @@ import kotlinx.datetime.LocalDate
  * @property children 账单详情列表
  * @property isExpanded 是否展开
  */
+@Serializable
 data class BillListEntity(
     val createTime: String = "",
     val expenditure: String = "",
@@ -31,6 +33,7 @@ data class BillListEntity(
  * @property createTime 创建时间
  * @property isIncome 是否是收入
  */
+@Serializable
 data class BillDetailListEntity(
     val billId: Long = 0L,
     val cover: String = "",
@@ -47,9 +50,26 @@ data class BillDetailListEntity(
  * @property type null：全部，0：支出，1：收入
  * @property typeName 类型名称
  */
+@Serializable
 data class TypeEntity(
     val type: Long? = null,
     val typeName: String = ""
+)
+
+/**
+ * 消费类型
+ *
+ * @property typeId 消费类型id
+ * @property parentId 父级id
+ * @property typeName 类型名称
+ * @property isAdd 是否是添加布局
+ */
+@Serializable
+data class PayTypeEntity(
+    val typeId: Long = 0L,
+    val parentId: Long = 0L,
+    val typeName: String = "",
+    val isAdd: Boolean = false
 )
 
 /**
@@ -58,6 +78,7 @@ data class TypeEntity(
  * @property date 日期
  * @property type 0：年，1：月，2：日
  */
+@Serializable
 data class DateEntity(
     val type: Int = 1,
     val date: LocalDate = currentLocalDate()
@@ -69,6 +90,7 @@ data class DateEntity(
  * @property type null：全部，0：电子账户，1：储蓄账户
  * @property name 名称
  */
+@Serializable
 data class AccountEntity(
     val type: Int? = null,
     val name: String = ""

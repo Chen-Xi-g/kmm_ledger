@@ -96,72 +96,7 @@ private fun ActivateContent(
         }
         item(key = "input") {
             // 用户名
-            Spacer(modifier = Modifier.height(30.dp))
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_username,
-                value = component.username
-            ) {
-                component.updateUsername(it)
-            }
-            if (state.errorUsername.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorUsername,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 验证码
-            Row(
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BottomOutlineInput(
-                    modifier = Modifier
-                        .weight(1F),
-                    label = Res.strings.str_hint_login_code,
-                    value = component.code,
-                    type = 2
-                ) {
-                    component.updateCode(it)
-                }
-                Box(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(width = 120.dp, height = 45.dp)
-                        .border(
-                            width = 2.dp,
-                            color = LocalColor.current.themePrimary,
-                            shape = RoundedCornerShape(4.dp)
-                        ).clickable { onEvent(ActivateEvent.RefreshCode) }
-                ) {
-                    if (state.codeImg.isNotEmpty()) {
-                        Image(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(4.dp)),
-                            bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
-                            contentDescription = Res.strings.str_code,
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-                }
-            }
-            if (!state.errorCaptcha.isNullOrBlank()) {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorCaptcha,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
+            ActivateInputContent(component, state, onEvent)
         }
         item(key = "submit") {
             Spacer(modifier = Modifier.height(47.dp))
@@ -182,5 +117,83 @@ private fun ActivateContent(
             )
             Spacer(modifier = Modifier.height(50.dp))
         }
+    }
+}
+
+/**
+ * 激活账号输入内容
+ */
+@OptIn(ExperimentalEncodingApi::class)
+@Composable
+private fun ActivateInputContent(
+    component: ActivateVM,
+    state: ActivateState,
+    onEvent: (ActivateEvent) -> Unit
+) {
+    Spacer(modifier = Modifier.height(30.dp))
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_username,
+        value = component.username
+    ) {
+        component.updateUsername(it)
+    }
+    if (state.errorUsername.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorUsername,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 验证码
+    Row(
+        modifier = Modifier
+            .padding(start = 25.dp, end = 25.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BottomOutlineInput(
+            modifier = Modifier
+                .weight(1F),
+            label = Res.strings.str_hint_login_code,
+            value = component.code,
+            type = 2
+        ) {
+            component.updateCode(it)
+        }
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(width = 120.dp, height = 45.dp)
+                .border(
+                    width = 2.dp,
+                    color = LocalColor.current.themePrimary,
+                    shape = RoundedCornerShape(4.dp)
+                ).clickable { onEvent(ActivateEvent.RefreshCode) }
+        ) {
+            if (state.codeImg.isNotEmpty()) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(4.dp)),
+                    bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
+                    contentDescription = Res.strings.str_code,
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+        }
+    }
+    if (!state.errorCaptcha.isNullOrBlank()) {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorCaptcha,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
     }
 }

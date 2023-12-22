@@ -1,9 +1,12 @@
 package core.mappers
 
 import core.data.dto.BillListDto
+import core.data.dto.UserPayTypeDto
 import core.data.net.ResNet
 import core.domain.entity.BillDetailListEntity
 import core.domain.entity.BillListEntity
+import core.domain.entity.PayTypeEntity
+import core.domain.entity.TypeEntity
 import core.utils.toFriendlyTime
 import core.utils.toHourMinute
 import platform.format
@@ -39,3 +42,16 @@ fun ResNet<List<BillListDto>>.toBillListVo(): ResNet<List<BillListEntity>> = map
 fun Long.toYuan(): String {
     return "%.2f".format(this / 100.0)
 }
+
+/**
+ * 消费类型传输对象转换为页面数据
+ */
+fun ResNet<List<UserPayTypeDto>>.toPayTypeVo(): ResNet<List<PayTypeEntity>> = mapData(
+    data?.map {
+        PayTypeEntity(
+            typeId = it.typeId,
+            parentId = it.parentId,
+            typeName = it.typeName
+        )
+    }
+)

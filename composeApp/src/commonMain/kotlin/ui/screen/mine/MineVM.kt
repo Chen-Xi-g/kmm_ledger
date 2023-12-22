@@ -2,6 +2,7 @@ package ui.screen.mine
 
 import com.arkivanov.decompose.ComponentContext
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import ui.widget.ToastState
 
 /**
@@ -12,7 +13,7 @@ import ui.widget.ToastState
  */
 class MineVM(
     componentContext: ComponentContext,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit
+    private val navigationListener: IRootComponent
 ) : BaseComponent<MineState, MineEvent, MineEffect>(componentContext) {
     override fun initialState(): MineState {
         return MineState()

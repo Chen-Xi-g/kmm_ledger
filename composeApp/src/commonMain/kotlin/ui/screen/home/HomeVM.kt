@@ -1,12 +1,21 @@
 package ui.screen.home
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.update
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.arkivanov.essenty.lifecycle.doOnCreate
 import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.statekeeper.consume
 import core.data.net.ResNet
 import core.data.repository.BillRepositoryImpl
 import core.domain.repository.BillRepository
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.utils.monthDays
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
@@ -20,18 +29,24 @@ import ui.widget.ToastState
  */
 class HomeVM(
     componentContext: ComponentContext,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
+    private val navigationListener: IRootComponent,
     private val billRepository: BillRepository = BillRepositoryImpl()
 ) : BaseComponent<HomeState, HomeEvent, HomeEffect>(componentContext) {
 
+    var cacheState = stateKeeper.consume(key = HomeState::class.simpleName ?: "HomeState", strategy = HomeState.serializer()) ?: HomeState()
+
     init {
-        lifecycle.doOnResume {
+        stateKeeper.register(key = HomeState::class.simpleName ?: "HomeState", strategy = HomeState.serializer()){
+            cacheState
+        }
+        lifecycle.doOnCreate {
             onEvent(HomeEvent.QueryBillList)
         }
     }
 
+
     override fun initialState(): HomeState {
-        return HomeState()
+        return cacheState
     }
 
     override fun onEvent(event: HomeEvent) {
@@ -42,7 +57,9 @@ class HomeVM(
                 updateState {
                     it.copy(
                         visibleFilter = !it.visibleFilter
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -57,7 +74,9 @@ class HomeVM(
                                 homeLedgerItem
                             }
                         }
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -66,7 +85,9 @@ class HomeVM(
                 updateState {
                     it.copy(
                         currentAccountIndex = event.index
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -80,7 +101,9 @@ class HomeVM(
                             it.currentDateIndex
                         },
                         visibleMonthPicker = event.visible
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -89,7 +112,9 @@ class HomeVM(
                 updateState {
                     it.copy(
                         currentTypeIndex = event.index
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -111,7 +136,9 @@ class HomeVM(
                             )
                         },
                         visibleMonthPicker = false
-                    )
+                    ).apply {
+                        cacheState = this
+                    }
                 }
             }
 
@@ -173,7 +200,9 @@ class HomeVM(
             it.copy(
                 isLoading = true,
                 visibleFilter = false
-            )
+            ).apply {
+                cacheState = this
+            }
         }
         scope.launch {
             val result = billRepository.getBill(
@@ -185,11 +214,13 @@ class HomeVM(
             )
             when (result) {
                 is ResNet.Success -> {
-                    updateState {
-                        it.copy(
+                    updateState { state ->
+                        state.copy(
                             isLoading = false,
                             list = result.data ?: emptyList()
-                        )
+                        ).apply {
+                            cacheState = this
+                        }
                     }
                 }
 
@@ -197,9 +228,11 @@ class HomeVM(
                     updateState {
                         it.copy(
                             isLoading = false
-                        )
+                        ).apply {
+                            cacheState = this
+                        }
                     }
-                    onToast.toastError(result.msg ?: "获取账单失败")
+                    navigationListener.toastError(result.msg ?: "获取账单失败")
                 }
             }
         }

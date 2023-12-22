@@ -6,7 +6,13 @@ import com.arkivanov.decompose.router.pages.Pages
 import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.replaceCurrent
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
+import core.navigation.RootComponent
 import kotlinx.serialization.Serializable
 import platform.log
 import ui.screen.add.AddVM
@@ -23,23 +29,14 @@ import ui.widget.ToastState
 @OptIn(ExperimentalDecomposeApi::class)
 class MainVM(
     componentContext: ComponentContext,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit
+    private val navigationListener: IRootComponent
 ) : BaseComponent<MainState, MainEvent, MainEffect>(componentContext) {
 
-    private val navigation = PagesNavigation<Configuration>()
-    val pages = childPages(
+    private val navigation = StackNavigation<Configuration>()
+    val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialPages = {
-            Pages(
-                items = listOf(
-                    Configuration.Home,
-                    Configuration.Add,
-                    Configuration.Mine
-                ),
-                selectedIndex = 0
-            )
-        },
+        initialConfiguration = Configuration.Home,
         key = "MainComponentPage",
         childFactory = ::createChild
     )
@@ -52,27 +49,38 @@ class MainVM(
     }
 
     private fun createChild(
-        configuration: Configuration,
+        config: Configuration,
         componentContext: ComponentContext
-    ): Page {
-        return when (configuration) {
-            is Configuration.Home -> Page.Home(HomeVM(componentContext, onToast))
-            is Configuration.Add -> Page.Add(AddVM(componentContext, onToast))
-            is Configuration.Mine -> Page.Mine(MineVM(componentContext, onToast))
+    ): Child {
+        return when (config) {
+            is Configuration.Home -> Child.Home(HomeVM(componentContext, navigationListener))
+            is Configuration.Add -> Child.Add(AddVM(componentContext, navigationListener))
+            is Configuration.Mine -> Child.Mine(MineVM(componentContext, navigationListener))
         }
     }
 
     fun selectPage(index: Int) {
-        "当前index： $index".log()
-        navigation.select(index)
+        updateState {
+            it.copy(
+                selectIndex = index
+            )
+        }
+        navigation.bringToFront(
+            when(index) {
+                0 -> Configuration.Home
+                1 -> Configuration.Add
+                2 -> Configuration.Mine
+                else -> Configuration.Home
+            }
+        )
     }
 
-    sealed class Page {
-        data class Home(val component: HomeVM) : Page()
+    sealed class Child {
+        data class Home(val component: HomeVM) : Child()
 
-        data class Add(val component: AddVM) : Page()
+        data class Add(val component: AddVM) : Child()
 
-        data class Mine(val component: MineVM) : Page()
+        data class Mine(val component: MineVM) : Child()
     }
 
 

@@ -98,17 +98,17 @@ data class UserAccountDto(
 /**
  * 消费类型
  *
- * @property orderNum 排序
  * @property typeId 消费类型id
+ * @property parentId 父类型id
  * @property typeName 消费类型名称
  * @property typeTag 消费类型标签
  */
 @Serializable
 data class UserPayTypeDto(
-    @SerialName("orderNum")
-    val orderNum: Int = 0,
     @SerialName("typeId")
     val typeId: Long = 0,
+    @SerialName("parentId")
+    val parentId: Long = 0,
     @SerialName("typeName")
     val typeName: String = "",
     @SerialName("typeTag")

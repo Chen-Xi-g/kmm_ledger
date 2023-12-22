@@ -69,9 +69,6 @@ fun LedgerTitle(
         // 菜单
         if (!menu.isNullOrBlank()){
             FillGradationMenuButton(
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterEnd)
-                    .padding(10.dp),
                 text = menu,
                 onClick = onMenu
             )

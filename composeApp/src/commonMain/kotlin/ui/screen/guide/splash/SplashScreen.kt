@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import core.navigation.PreviewRootComponent
+import core.navigation.previewComponentContext
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import platform.WindowInfo
@@ -61,7 +63,7 @@ fun SplashScreenAuto(
     isCompact: Boolean,
     countDown: Int,
     onEvent: (SplashEvent) -> Unit
-){
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -103,12 +105,11 @@ fun SplashScreenAuto(
 
 @Preview
 @Composable
-fun PreviewSplashScreen(){
+fun PreviewSplashScreen() {
     LedgerTheme {
         SplashScreen(
             component = SplashVM(
-                componentContext = DefaultComponentContext(LifecycleRegistry()),
-                onNavigationToScreenGuide = {}
+                previewComponentContext(), PreviewRootComponent()
             )
         )
     }

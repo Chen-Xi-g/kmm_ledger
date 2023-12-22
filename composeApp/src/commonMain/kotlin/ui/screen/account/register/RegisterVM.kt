@@ -13,6 +13,7 @@ import core.domain.user_case.ValidationEmail
 import core.domain.user_case.ValidationPassword
 import core.domain.user_case.ValidationUsername
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
 import ui.widget.ToastState
@@ -28,8 +29,7 @@ import ui.widget.ToastState
 class RegisterVM(
     component: ComponentContext,
     private val accountUsername: String,
-    private val goBack: () -> Unit,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
+    private val navigationListener: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationEmail: ValidationEmail = ValidationEmail(),
@@ -69,7 +69,7 @@ class RegisterVM(
     override fun onEvent(event: RegisterEvent) {
         when(event){
             RegisterEvent.GoBack -> {
-                goBack()
+                navigationListener.onBack()
             }
             RegisterEvent.RefreshCode -> {
                 getCodeImage()
@@ -194,7 +194,7 @@ class RegisterVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastError(resp.msg)
+                    navigationListener.toastError(resp.msg)
                     getCodeImage()
                 }
 
@@ -204,7 +204,7 @@ class RegisterVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastSuccess(resp.msg)
+                    navigationListener.toastSuccess(resp.msg)
                 }
             }
         }
@@ -217,7 +217,7 @@ class RegisterVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    onToast.toastError(resp.msg)
+                    navigationListener.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {

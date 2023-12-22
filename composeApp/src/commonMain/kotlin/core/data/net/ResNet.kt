@@ -44,7 +44,7 @@ sealed class ResNet<T>(
                 // 登录失效, 重新登录
                 GlobalNavigator.login()
             }
-            Error(msg, code, data)
+            Error(msg ?: "未知异常，请重试", code, data)
         }
     }
 }

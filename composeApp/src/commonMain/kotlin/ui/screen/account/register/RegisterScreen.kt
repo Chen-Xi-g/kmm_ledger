@@ -78,7 +78,6 @@ fun RegisterScreen(
     LoadingDialog(state.isLoading)
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 @Composable
 private fun RegisterContent(
     component: RegisterVM,
@@ -99,134 +98,7 @@ private fun RegisterContent(
         }
         item(key = "input") {
             // 用户名
-            Spacer(modifier = Modifier.height(30.dp))
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_username,
-                value = component.username
-            ) {
-                component.updateUsername(it)
-            }
-            if (state.errorUsername.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorUsername,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 邮箱
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_email,
-                value = component.email
-            ) {
-                component.updateEmail(it)
-            }
-            if (state.errorEmail.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorEmail,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 密码
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_password,
-                value = component.password,
-                type = 1
-            ) {
-                component.updatePassword(it)
-            }
-            if (state.errorPassword.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorPassword,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 确认密码
-            BottomOutlineInput(
-                modifier = Modifier
-                    .padding(horizontal = 25.dp)
-                    .fillMaxWidth(),
-                label = Res.strings.str_hint_login_confirm_password,
-                value = component.confirmPassword,
-                type = 1
-            ) {
-                component.updateConfirmPassword(it)
-            }
-            if (state.errorConfirmPassword.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(15.dp))
-            } else {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorConfirmPassword,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
-            // 验证码
-            Row(
-                modifier = Modifier
-                    .padding(start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BottomOutlineInput(
-                    modifier = Modifier
-                        .weight(1F),
-                    label = Res.strings.str_hint_login_code,
-                    value = component.code,
-                    type = 2
-                ) {
-                    component.updateCode(it)
-                }
-                Box(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(width = 120.dp, height = 45.dp)
-                        .border(
-                            width = 2.dp,
-                            color = LocalColor.current.themePrimary,
-                            shape = RoundedCornerShape(4.dp)
-                        ).clickable { onEvent(RegisterEvent.RefreshCode) }
-                ) {
-                    if (state.codeImg.isNotEmpty()) {
-                        Image(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(4.dp)),
-                            bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
-                            contentDescription = Res.strings.str_code,
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-                }
-            }
-            if (!state.errorCaptcha.isNullOrBlank()) {
-                Text(
-                    modifier = Modifier.padding(start = 25.dp),
-                    text = state.errorCaptcha,
-                    fontSize = 12.sp,
-                    color = LocalColor.current.textError
-                )
-            }
+            RegisterInputContent(component, state, onEvent)
         }
         item(key = "submit") {
             Spacer(modifier = Modifier.height(47.dp))
@@ -247,5 +119,145 @@ private fun RegisterContent(
             )
             Spacer(modifier = Modifier.height(50.dp))
         }
+    }
+}
+
+/**
+ * 注册输入内容
+ */
+@OptIn(ExperimentalEncodingApi::class)
+@Composable
+private fun RegisterInputContent(
+    component: RegisterVM,
+    state: RegisterState,
+    onEvent: (RegisterEvent) -> Unit
+) {
+    Spacer(modifier = Modifier.height(30.dp))
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_username,
+        value = component.username
+    ) {
+        component.updateUsername(it)
+    }
+    if (state.errorUsername.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorUsername,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 邮箱
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_email,
+        value = component.email
+    ) {
+        component.updateEmail(it)
+    }
+    if (state.errorEmail.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorEmail,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 密码
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_password,
+        value = component.password,
+        type = 1
+    ) {
+        component.updatePassword(it)
+    }
+    if (state.errorPassword.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorPassword,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 确认密码
+    BottomOutlineInput(
+        modifier = Modifier
+            .padding(horizontal = 25.dp)
+            .fillMaxWidth(),
+        label = Res.strings.str_hint_login_confirm_password,
+        value = component.confirmPassword,
+        type = 1
+    ) {
+        component.updateConfirmPassword(it)
+    }
+    if (state.errorConfirmPassword.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(15.dp))
+    } else {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorConfirmPassword,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
+    }
+    // 验证码
+    Row(
+        modifier = Modifier
+            .padding(start = 25.dp, end = 25.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BottomOutlineInput(
+            modifier = Modifier
+                .weight(1F),
+            label = Res.strings.str_hint_login_code,
+            value = component.code,
+            type = 2
+        ) {
+            component.updateCode(it)
+        }
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(width = 120.dp, height = 45.dp)
+                .border(
+                    width = 2.dp,
+                    color = LocalColor.current.themePrimary,
+                    shape = RoundedCornerShape(4.dp)
+                ).clickable { onEvent(RegisterEvent.RefreshCode) }
+        ) {
+            if (state.codeImg.isNotEmpty()) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(4.dp)),
+                    bitmap = Base64.decode(state.codeImg).base64ToBitmap(),
+                    contentDescription = Res.strings.str_code,
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+        }
+    }
+    if (!state.errorCaptcha.isNullOrBlank()) {
+        Text(
+            modifier = Modifier.padding(start = 25.dp),
+            text = state.errorCaptcha,
+            fontSize = 12.sp,
+            color = LocalColor.current.textError
+        )
     }
 }

@@ -3,6 +3,9 @@ package core.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import com.arkivanov.essenty.instancekeeper.getOrCreate
 import core.utils.coroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,6 +14,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.serializer
+import ui.screen.home.HomeState
 import ui.widget.ToastState
 
 /**
@@ -32,7 +38,6 @@ abstract class BaseComponent<S : UiState, EV : UiEvent, EF : UiEffect>(
     val effect by lazy { _effect.asSharedFlow() }
 
     protected abstract fun initialState(): S
-
     /**
      * 事件接收
      */

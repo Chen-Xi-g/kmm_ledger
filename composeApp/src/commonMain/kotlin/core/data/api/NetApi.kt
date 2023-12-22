@@ -158,5 +158,54 @@ sealed class NetApi(val url: String) {
                 )
             }
         }
+
+        /**
+         * 获取消费类型
+         *
+         * @param typeTag 类型标签（0代表支出 1代表收入）
+         * @param typeName 类型名称
+         */
+        data class GetPayType(
+            val typeTag: String = "0",
+            val typeName: String? = null
+        ) : BillApi("getPayType".base_path){
+            fun toMap(): Map<String, String?> {
+                return mapOf(
+                    "typeTag" to typeTag,
+                    "typeName" to typeName,
+                )
+            }
+        }
+
+        /**
+         * 获取消费类型子列表
+         *
+         * @param typeId 消费类型Id
+         */
+        data class GetPayTypeChild(val typeId: String) : BillApi("getPayTypeChild".base_path + "/$typeId")
+
+        /**
+         * 新增消费类型
+         *
+         * @param typeName 类型名称
+         * @param typeTag 类型标签（0代表支出 1代表收入）
+         * @param parentId 父级id
+         * @param typeId 消费类型Id
+         */
+        data class AddOrEditPayType(
+            val typeName: String,
+            val typeTag: String,
+            val parentId: Long? = null,
+            val typeId: Long? = null
+        ): BillApi("addOrUpdatePayType".base_path){
+            fun toMap(): Map<String, String?> {
+                return mapOf(
+                    "typeName" to typeName,
+                    "typeTag" to typeTag,
+                    "parentId" to parentId?.toString(),
+                    "typeId" to typeId?.toString(),
+                )
+            }
+        }
     }
 }

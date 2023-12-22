@@ -2,6 +2,7 @@ package ui.screen.guide
 
 import com.arkivanov.decompose.ComponentContext
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import core.navigation.UiState
 
@@ -13,7 +14,7 @@ import core.navigation.UiState
  */
 class GuideVM(
     componentContext: ComponentContext,
-    private val onNavigationToScreenMain: () -> Unit,
+    private val navigationListener: IRootComponent
 ) : BaseComponent<UiState, GuideEvent, UiEffect>(componentContext) {
     override fun initialState(): UiState {
         return object : UiState {}
@@ -22,7 +23,7 @@ class GuideVM(
     override fun onEvent(event: GuideEvent) {
         when (event) {
             GuideEvent.ClickButton -> {
-                onNavigationToScreenMain()
+                navigationListener.onNavigationReplaceToScreenMain()
             }
         }
     }

@@ -2,6 +2,7 @@ package core.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
@@ -9,11 +10,13 @@ import com.arkivanov.decompose.router.stack.items
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceCurrent
-import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.arkivanov.decompose.value.Value
 import core.utils.GlobalNavigator
 import core.utils.GlobalNavigatorListener
 import core.utils.KeyRepository
-import kotlinx.datetime.Clock
+import core.utils.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import platform.goHome
 import ui.screen.MainVM
@@ -25,9 +28,10 @@ import ui.screen.account.register.RegisterVM
 import ui.screen.guide.GuideVM
 import ui.screen.guide.splash.SplashVM
 import ui.widget.ToastState
+import core.navigation.IRootComponent.Child
 
 /**
- * 设置导航
+ * 全局导航组件
  *
  * @author 高国峰
  * @date 2023/12/6-15:23
@@ -35,7 +39,9 @@ import ui.widget.ToastState
 @OptIn(ExperimentalDecomposeApi::class)
 class RootComponent(
     componentContext: ComponentContext
-) : ComponentContext by componentContext, BackHandlerOwner {
+) : ComponentContext by componentContext, IRootComponent {
+
+    val scope = coroutineScope(Dispatchers.Main)
 
     /**
      * Toast状态
@@ -46,13 +52,16 @@ class RootComponent(
      * 导航堆栈
      */
     private val navigation = StackNavigation<Configuration>()
-    val childStack = childStack(
+
+    private val stack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
         initialConfiguration = Configuration.Splash,
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    override val childStack: Value<ChildStack<*, Child>> = stack
 
     /**
      * 记录当前点击返回按钮的时间
@@ -71,228 +80,178 @@ class RootComponent(
 
     private fun createChild(
         config: Configuration,
-        componentContext: ComponentContext
+        component: ComponentContext
     ): Child {
         return when (config) {
-            Configuration.Splash -> Child.Splash(
-                SplashVM(
-                    componentContext = componentContext,
-                    onNavigationToScreenGuide = {
-                        if (KeyRepository.isFirstLaunch) {
-                            KeyRepository.isFirstLaunch = false
-                            navigation.replaceCurrent(Configuration.Guide)
-                            return@SplashVM
-                        } else if (KeyRepository.token.isNotEmpty()) {
-                            navigation.replaceCurrent(Configuration.Main)
-                        } else {
-                            navigation.replaceCurrent(Configuration.Login)
-                        }
-                    }
-                )
-            )
-
-            Configuration.Guide -> Child.Guide(
-                GuideVM(componentContext) {
-                    if (KeyRepository.token.isNotEmpty()) {
-                        navigation.replaceCurrent(Configuration.Main)
-                    } else {
-                        navigation.replaceCurrent(Configuration.Login)
-                    }
-                }
-            )
-
-            Configuration.Main -> Child.Main(
-                MainVM(componentContext, ::showToast)
-            )
-
-            Configuration.Login -> Child.Login(
-                LoginVM(
-                    componentContext,
-                    goBack = {
-                        onBackClicked()
-                    },
-                    onToast = ::showToast,
-                    onNavigationToScreenMain = {
-                        navigation.replaceCurrent(Configuration.Main)
-                    },
-                    onNavigationToScreenRegister = {
-                        pushNew(Configuration.Register(it))
-                    },
-                    onNavigationToScreenActivateAccount = {
-                        pushNew(Configuration.ActivateAccount)
-                    },
-                    onNavigationToScreenForgetPassword = {
-                        pushNew(Configuration.ForgetPwd(it))
-                    },
-                    onNavigationToScreenUserAgreement = {
-                        pushNew(Configuration.Agreement(1))
-                    },
-                    onNavigationToScreenPrivacyPolicy = {
-                        pushNew(Configuration.Agreement(2))
-                    }
-                )
-            )
-
+            Configuration.Splash -> Child.Splash(SplashVM(component, this))
+            Configuration.Guide -> Child.Guide(GuideVM(component, this))
+            Configuration.Main -> Child.Main(MainVM(component, this))
+            Configuration.Login -> Child.Login(LoginVM(component, this))
+            Configuration.ActivateAccount -> Child.ActivateAccount(ActivateVM(component, this))
             is Configuration.Register -> Child.Register(
                 RegisterVM(
-                    componentContext,
-                    accountUsername = config.username,
-                    goBack = {
-                        onBackClicked()
-                    },
-                    onToast = ::showToast,
+                    component,
+                    config.username,
+                    this
                 )
             )
 
             is Configuration.ForgetPwd -> Child.ForgetPwd(
                 ForgetPwdVM(
-                    componentContext,
-                    accountUsername = config.username,
-                    goBack = {
-                        onBackClicked()
-                    },
-                    onToast = ::showToast,
+                    component,
+                    config.username,
+                    this
                 )
             )
-
-            Configuration.ActivateAccount -> Child.ActivateAccount(
-                ActivateVM(
-                    componentContext,
-                    goBack = {
-                        onBackClicked()
-                    },
-                    onToast = ::showToast,
-                )
-            )
-
             is Configuration.Agreement -> Child.Agreement(
                 AgreementVM(
-                    componentContext,
-                    type = config.type,
-                    goBack = {
-                        onBackClicked()
-                    },
-                    onToast = ::showToast,
+                    component,
+                    config.type,
+                    this
                 )
             )
         }
     }
 
-    /**
-     * 子组件
-     */
-    sealed class Child {
-        /**
-         * 启动页
-         */
-        data class Splash(val component: SplashVM) : Child()
-
-        /**
-         * 引导页
-         */
-        data class Guide(val component: GuideVM) : Child()
-
-        /**
-         * 主页
-         */
-        data class Main(val component: MainVM) : Child()
-
-        /**
-         * 登录
-         */
-        data class Login(val component: LoginVM) : Child()
-
-        /**
-         * 注册
-         */
-        data class Register(val component: RegisterVM) : Child()
-
-        /**
-         * 忘记密码
-         */
-        data class ForgetPwd(val component: ForgetPwdVM) : Child()
-
-        /**
-         * 激活账号
-         */
-        data class ActivateAccount(val component: ActivateVM) : Child()
-
-        /**
-         * 系统协议
-         */
-        data class Agreement(val component: AgreementVM) : Child()
+    override fun toastDefault(msg: String?) {
+        toastState?.invoke(msg ?: "", ToastState.ToastStyle.Default)
     }
 
-    /**
-     * 导航屏幕配置
-     */
-    @Serializable
-    sealed class Configuration {
-
-        /**
-         * 启动页
-         */
-        @Serializable
-        data object Splash : Configuration()
-
-        /**
-         * 引导页
-         */
-        @Serializable
-        data object Guide : Configuration()
-
-        /**
-         * 主页
-         */
-        @Serializable
-        data object Main : Configuration()
-
-        /**
-         * 登录
-         */
-        @Serializable
-        data object Login : Configuration()
-
-        /**
-         * 注册
-         */
-        @Serializable
-        data class Register(val username: String) : Configuration()
-
-        /**
-         * 忘记密码
-         */
-        @Serializable
-        data class ForgetPwd(val username: String) : Configuration()
-
-        /**
-         * 激活账号
-         */
-        @Serializable
-        data object ActivateAccount : Configuration()
-
-        /**
-         * 系统协议
-         */
-        @Serializable
-        data class Agreement(val type: Int) : Configuration()
+    override fun toastError(msg: String?) {
+        toastState?.invoke(msg ?: "", ToastState.ToastStyle.Error)
     }
 
-    private fun pushNew(configuration: Configuration) {
-        if (childStack.items.any { it.configuration == configuration }) {
-            navigation.bringToFront(configuration)
-        } else {
-            navigation.pushNew(configuration)
-        }
+    override fun toastSuccess(msg: String?) {
+        toastState?.invoke(msg ?: "", ToastState.ToastStyle.Success)
     }
 
-    fun onBackClicked() {
+    override fun onBack() {
         if (childStack.items.size <= 1) {
             // 退出到桌面
             goHome()
             return
         }
         navigation.pop()
+    }
+
+    override fun onNavigationToScreenGuide() {
+        if (KeyRepository.isFirstLaunch) {
+            KeyRepository.isFirstLaunch = false
+            navigation.replaceCurrent(Configuration.Guide)
+            return
+        } else if (KeyRepository.token.isNotEmpty()) {
+            navigation.replaceCurrent(Configuration.Main)
+        } else {
+            navigation.replaceCurrent(Configuration.Login)
+        }
+    }
+
+    override fun onNavigationReplaceToScreenMain() {
+        if (KeyRepository.token.isNotEmpty()) {
+            navigation.replaceCurrent(Configuration.Main)
+        } else {
+            navigation.replaceCurrent(Configuration.Login)
+        }
+    }
+
+    override fun onNavigationToScreenMain() {
+        pushNew(Configuration.Main, true)
+    }
+
+    override fun onNavigationToScreenRegister(username: String) {
+        pushNew(Configuration.Register(username))
+    }
+
+    override fun onNavigationToScreenLogin() {
+        pushNew(Configuration.Login)
+    }
+
+    override fun onNavigationToScreenForgetPwd(username: String) {
+        pushNew(Configuration.ForgetPwd(username))
+    }
+
+    override fun onNavigationToScreenActivateAccount(username: String) {
+        pushNew(Configuration.ActivateAccount)
+    }
+
+    override fun onNavigationToScreenAgreement(type: Int) {
+        pushNew(Configuration.Agreement(type))
+    }
+
+    /**
+     * 导航屏幕配置
+     */
+    @Serializable
+    private sealed interface Configuration {
+
+        /**
+         * 启动页
+         */
+        @Serializable
+        data object Splash : Configuration
+
+        /**
+         * 引导页
+         */
+        @Serializable
+        data object Guide : Configuration
+
+        /**
+         * 主页
+         */
+        @Serializable
+        data object Main : Configuration
+
+        /**
+         * 登录
+         */
+        @Serializable
+        data object Login : Configuration
+
+        /**
+         * 注册
+         */
+        @Serializable
+        data class Register(val username: String) : Configuration
+
+        /**
+         * 忘记密码
+         */
+        @Serializable
+        data class ForgetPwd(val username: String) : Configuration
+
+        /**
+         * 激活账号
+         */
+        @Serializable
+        data object ActivateAccount : Configuration
+
+        /**
+         * 系统协议
+         */
+        @Serializable
+        data class Agreement(val type: Int) : Configuration
+    }
+
+    /**
+     * 导航到新的屏幕
+     *
+     * @param configuration 屏幕配置
+     * @param isReplace 是否替换当前屏幕
+     */
+    private fun pushNew(configuration: Configuration, isReplace: Boolean = false) {
+        scope.launch {
+            if (childStack.items.any { it.configuration == configuration }) {
+                // 已存在，带到最前面
+                navigation.bringToFront(configuration)
+            } else {
+                if (isReplace) {
+                    navigation.replaceCurrent(configuration)
+                } else {
+                    navigation.pushNew(configuration)
+                }
+            }
+        }
     }
 
     private fun showToast(msg: String?, style: ToastState.ToastStyle) {

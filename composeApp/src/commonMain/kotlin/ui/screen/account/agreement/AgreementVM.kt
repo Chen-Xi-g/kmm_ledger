@@ -6,6 +6,7 @@ import core.data.net.ResNet
 import core.data.repository.AccountRepositoryImpl
 import core.domain.repository.AccountRepository
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
 import ui.widget.ToastState
@@ -21,8 +22,7 @@ import ui.widget.ToastState
 class AgreementVM(
     component: ComponentContext,
     private val type: Int,
-    private val goBack: () -> Unit,
-    private val onToast: (String?, ToastState.ToastStyle) -> Unit,
+    private val navigationListener: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
 ) :
     BaseComponent<AgreementState, AgreementEvent, UiEffect>(component) {
@@ -42,7 +42,7 @@ class AgreementVM(
     override fun onEvent(event: AgreementEvent) {
         when (event) {
             AgreementEvent.GoBack -> {
-                goBack()
+                navigationListener.onBack()
             }
 
             is AgreementEvent.LoadAgreement -> {
@@ -53,7 +53,7 @@ class AgreementVM(
 
     private fun loadAgreement() {
         if (type != 1 && type != 2) {
-            onToast.toastError("协议类型错误")
+            navigationListener.toastError("协议类型错误")
             return
         }
         updateState {
@@ -69,7 +69,7 @@ class AgreementVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastError(resp.msg)
+                    navigationListener.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {
@@ -78,7 +78,7 @@ class AgreementVM(
                             isLoading = false
                         )
                     }
-                    onToast.toastSuccess(resp.msg)
+                    navigationListener.toastSuccess(resp.msg)
                 }
             }
         }

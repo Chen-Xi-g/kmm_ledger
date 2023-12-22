@@ -2,10 +2,15 @@ package ui.widget
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -83,17 +88,19 @@ fun FillGradationButton(
 @Composable
 fun FillGradationMenuButton(
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val selected = remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
         targetValue = if (selected.value) 0.95f else 1f
     )
-    Button(
-        modifier = modifier
+    Box(
+        modifier = Modifier
+            .defaultMinSize(minWidth = 60.dp)
             .scale(scale.value)
-            .pointerInput("scale") {
+            .gradationBrush(RoundedCornerShape(6.dp))
+            .padding(vertical = 5.dp)
+            .pointerInput(text) {
                 // 持续监听指针事件
                 while (true) {
                     val event = awaitPointerEventScope {
@@ -102,29 +109,17 @@ fun FillGradationMenuButton(
                     // 监听按下事件和抬起事件
                     selected.value = event.changes.any { it.pressed }
                 }
+            }.clickable {
+                onClick()
             },
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
-        ),
-        elevation = null,
-        contentPadding = PaddingValues()
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .gradationBrush(RoundedCornerShape(6.dp))
-                .padding(horizontal = 18.dp, vertical = 5.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

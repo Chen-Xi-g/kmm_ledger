@@ -3,6 +3,7 @@ package ui.screen.guide.splash
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnCreate
 import core.navigation.BaseComponent
+import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import core.navigation.UiState
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 class SplashVM(
     componentContext: ComponentContext,
-    private val onNavigationToScreenGuide: () -> Unit
+    private val navigationListener: IRootComponent
 ) : BaseComponent<UiState, SplashEvent, UiEffect>(componentContext){
 
     init {
@@ -45,7 +46,7 @@ class SplashVM(
         when(event){
             SplashEvent.Skip -> {
                 countDownJob?.cancel()
-                onNavigationToScreenGuide()
+                navigationListener.onNavigationToScreenGuide()
             }
         }
     }
@@ -57,7 +58,7 @@ class SplashVM(
                 _countDown.value = _countDown.value - 1
                 if (_countDown.value <= 0) {
                     scope.launch(Dispatchers.Main){
-                        onNavigationToScreenGuide()
+                        navigationListener.onNavigationToScreenGuide()
                     }
                 }
                 delay(1.seconds)
