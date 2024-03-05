@@ -45,3 +45,28 @@ data class CodeImageDto(
 data class TokenDto(
     val token: String = ""
 )
+
+/**
+ * 用户信息传输对象
+ *
+ * @property accountNum 账户数量
+ * @property billNum 账单数量
+ * @property email 邮箱
+ * @property nickName 昵称
+ * @property sex 性别（sys_user_sex 0=男,1=女,2=未知）
+ * @property status 状态（sys_user_status 0=正常 1=停用 2=未激活）
+ * @property userId 用户ID
+ * @property userName 用户名
+ */
+@Serializable
+data class UserInfoDto(
+    val accountNum: Int = 0,
+    val billNum: Int = 0,
+    val email: String = "",
+    val nickName: String = "",
+    val sex: String = "",
+    val status: String = "",
+    val userId: Long = 0,
+    val userName: String = "",
+    val createTime: String = ""
+)

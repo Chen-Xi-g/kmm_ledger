@@ -2,6 +2,7 @@ package core.utils
 
 import com.russhwolf.settings.boolean
 import com.russhwolf.settings.string
+import core.data.dto.UserInfoDto
 import platform.createSettings
 
 /**
@@ -10,7 +11,7 @@ import platform.createSettings
  * @author 高国峰
  * @date 2023/12/8-11:50
  */
-object KeyRepository{
+object KeyRepository {
     private val settings = createSettings()
 
     /**
@@ -28,7 +29,21 @@ object KeyRepository{
      */
     var username: String by settings.string(defaultValue = "")
 
-    fun clear(){
+    /**
+     * 昵称
+     */
+    var nickName: String by settings.string(defaultValue = "")
+
+    /**
+     * 邮箱
+     */
+    var email: String by settings.string(defaultValue = "")
+
+    fun clear() {
+        token = ""
+    }
+
+    fun clearAll() {
         settings.clear()
     }
 }

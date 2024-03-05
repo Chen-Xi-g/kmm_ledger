@@ -3,6 +3,8 @@ package ui.widget
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
@@ -17,8 +19,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -40,9 +44,9 @@ fun FillGradationButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val selected = remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
-        targetValue = if (selected.value) 0.95f else 1f
+        targetValue = if (selected) 0.95f else 1f
     )
     Button(
         modifier = modifier
@@ -50,11 +54,12 @@ fun FillGradationButton(
             .pointerInput("scale") {
                 // 持续监听指针事件
                 while (true) {
-                    val event = awaitPointerEventScope {
-                        awaitPointerEvent()
+                    awaitPointerEventScope {
+                        awaitFirstDown(false)
+                        selected = true
+                        waitForUpOrCancellation()
+                        selected = false
                     }
-                    // 监听按下事件和抬起事件
-                    selected.value = event.changes.any { it.pressed }
                 }
             },
         onClick = onClick,
@@ -88,14 +93,15 @@ fun FillGradationButton(
 @Composable
 fun FillGradationMenuButton(
     text: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val selected = remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
-        targetValue = if (selected.value) 0.95f else 1f
+        targetValue = if (selected) 0.95f else 1f
     )
     Box(
-        modifier = Modifier
+        modifier = modifier
             .defaultMinSize(minWidth = 60.dp)
             .scale(scale.value)
             .gradationBrush(RoundedCornerShape(6.dp))
@@ -103,11 +109,12 @@ fun FillGradationMenuButton(
             .pointerInput(text) {
                 // 持续监听指针事件
                 while (true) {
-                    val event = awaitPointerEventScope {
-                        awaitPointerEvent()
+                    awaitPointerEventScope {
+                        awaitFirstDown(false)
+                        selected = true
+                        waitForUpOrCancellation()
+                        selected = false
                     }
-                    // 监听按下事件和抬起事件
-                    selected.value = event.changes.any { it.pressed }
                 }
             }.clickable {
                 onClick()

@@ -15,7 +15,6 @@ import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
-import ui.widget.ToastState
 
 /**
  * 忘记密码
@@ -26,7 +25,7 @@ import ui.widget.ToastState
 class ForgetPwdVM(
     componentContext: ComponentContext,
     private val accountUsername: String = "",
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationPassword: ValidationPassword = ValidationPassword(),
@@ -64,7 +63,7 @@ class ForgetPwdVM(
     override fun onEvent(event: ForgetPwdEvent) {
         when(event){
             ForgetPwdEvent.GoBack -> {
-                navigationListener.onBack()
+                rootComponent.onBack()
             }
             ForgetPwdEvent.RefreshCode -> {
                 getCodeImage()
@@ -175,7 +174,7 @@ class ForgetPwdVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                     getCodeImage()
                 }
                 is ResNet.Success -> {
@@ -184,7 +183,7 @@ class ForgetPwdVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastSuccess(resp.msg)
+                    rootComponent.toastSuccess(resp.msg)
                 }
             }
         }
@@ -197,7 +196,7 @@ class ForgetPwdVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {

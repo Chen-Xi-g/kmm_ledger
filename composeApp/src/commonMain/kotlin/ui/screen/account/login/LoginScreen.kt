@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.utils.KeyRepository.username
 import core.utils.Res
+import core.utils.pxToDp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import platform.base64ToBitmap
@@ -311,7 +312,7 @@ private fun LoginInputContent(
             modifier = Modifier
                 .padding(end = 10.dp)
                 .fillMaxWidth()
-                .padding(end = with(LocalDensity.current) { forgetSize.width.toDp() }),
+                .padding(end = forgetSize.width.pxToDp()),
             label = Res.strings.str_hint_login_password,
             value = component.password,
             type = 1

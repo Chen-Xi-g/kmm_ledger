@@ -40,6 +40,7 @@ data class BillDetailListEntity(
     val billName: String = "",
     val billRemark: String = "",
     val billAmount: String = "",
+    val billTypeName: String = "",
     val createTime: String = "",
     val isIncome: Boolean = false
 )
@@ -62,14 +63,13 @@ data class TypeEntity(
  * @property typeId 消费类型id
  * @property parentId 父级id
  * @property typeName 类型名称
- * @property isAdd 是否是添加布局
  */
 @Serializable
 data class PayTypeEntity(
     val typeId: Long = 0L,
     val parentId: Long = 0L,
     val typeName: String = "",
-    val isAdd: Boolean = false
+    var child: List<PayTypeEntity> = emptyList()
 )
 
 /**
@@ -94,4 +94,34 @@ data class DateEntity(
 data class AccountEntity(
     val type: Int? = null,
     val name: String = ""
+)
+
+/**
+ * 跳转到新增账单页所需参数
+ *
+ * @property billAmount 账单金额
+ * @property createTime 创建时间
+ * @property payTypeEntity 消费类型
+ * @property isIncome 是否是收入(true:收入, false:支出)
+ * @property billId 账单id(修改时传入)
+ * @property address 地址
+ * @property accountId 账户id
+ * @property latitude 纬度
+ * @property longitude 经度
+ * @property remark 备注
+ * @property isAdd 是否是新增账单
+ */
+@Serializable
+data class BillDetailEntity(
+    val billAmount: Long = 0,
+    val createTime: LocalDate = currentLocalDate(),
+    val payTypeEntity: PayTypeEntity = PayTypeEntity(),
+    val isIncome: Boolean = false,
+    val billId: Long? = null,
+    val address: String? = null,
+    val accountId: Long? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val remark: String? = null,
+    val isAdd: Boolean = true,
 )

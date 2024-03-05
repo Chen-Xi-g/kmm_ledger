@@ -47,7 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.utils.Res.strings.str_cancel
 import core.utils.Res.strings.str_confirm
+import core.utils.Res.strings.str_last_page
 import core.utils.Res.strings.str_last_year
+import core.utils.Res.strings.str_next_page
 import core.utils.Res.strings.str_this_year
 import core.utils.currentLocalDateTime
 import core.utils.toEpochMilliseconds
@@ -189,7 +191,7 @@ fun YearPickerDialog(
                                         pageState.animateScrollToPage(pageState.currentPage - 1)
                                     }
                                 }.padding(10.dp),
-                            text = str_last_year,
+                            text = str_last_page,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (pageState.currentPage == 0) LocalColor.current.textPrimary.copy(alpha = 0.5f) else LocalColor.current.textPrimary
@@ -204,7 +206,7 @@ fun YearPickerDialog(
                                         pageState.animateScrollToPage(pageState.currentPage + 1)
                                     }
                                 }.padding(10.dp),
-                            text = str_this_year,
+                            text = str_next_page,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (pageState.currentPage == pages - 1) LocalColor.current.textPrimary.copy(

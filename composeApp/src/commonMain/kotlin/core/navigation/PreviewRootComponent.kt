@@ -5,6 +5,9 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import core.data.dto.UserAccountDto
+import core.domain.entity.BillDetailEntity
+import core.domain.entity.PayTypeEntity
 import ui.screen.guide.splash.SplashVM
 
 /**
@@ -53,7 +56,7 @@ class PreviewRootComponent : IRootComponent {
     override fun onNavigationToScreenRegister(username: String) {
     }
 
-    override fun onNavigationToScreenLogin() {
+    override fun onNavigationToScreenLogin(isFinishAll: Boolean) {
     }
 
     override fun onNavigationToScreenForgetPwd(username: String) {
@@ -64,6 +67,34 @@ class PreviewRootComponent : IRootComponent {
 
     override fun onNavigationToScreenAgreement(type: Int) {
     }
+
+    override fun onNavigationToScreenPayTypeManager(isSelect: Boolean) {
+    }
+
+    override fun onNavigationToScreenPayTypeSubManager(name: String, id: Long, isSelect: Boolean) {
+    }
+
+    override fun onNavigationToScreenAccountManager(isSelect: Boolean) {
+    }
+
+    override fun onNavigationToScreenSetting() {
+    }
+
+    override fun onNavigationToScreenWebView(url: String, title: String) {
+    }
+
+    override fun onNavigationToScreenUserInfo() {
+    }
+
+    override fun onNavigationToScreenAddBill(billDetail: BillDetailEntity?) {
+    }
+
+    override fun onSelectedPayType(item: PayTypeEntity, isIncome: Boolean) {
+    }
+
+    override fun onSelectedAccount(item: UserAccountDto) {
+    }
+
 }
 
 fun previewComponentContext() = DefaultComponentContext(

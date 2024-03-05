@@ -16,7 +16,6 @@ import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
-import ui.widget.ToastState
 
 /**
  * 注册
@@ -29,7 +28,7 @@ import ui.widget.ToastState
 class RegisterVM(
     component: ComponentContext,
     private val accountUsername: String,
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationEmail: ValidationEmail = ValidationEmail(),
@@ -69,7 +68,7 @@ class RegisterVM(
     override fun onEvent(event: RegisterEvent) {
         when(event){
             RegisterEvent.GoBack -> {
-                navigationListener.onBack()
+                rootComponent.onBack()
             }
             RegisterEvent.RefreshCode -> {
                 getCodeImage()
@@ -194,7 +193,7 @@ class RegisterVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                     getCodeImage()
                 }
 
@@ -204,7 +203,7 @@ class RegisterVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastSuccess(resp.msg)
+                    rootComponent.toastSuccess(resp.msg)
                 }
             }
         }
@@ -217,7 +216,7 @@ class RegisterVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {

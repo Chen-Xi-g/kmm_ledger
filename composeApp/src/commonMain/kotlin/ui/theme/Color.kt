@@ -23,11 +23,13 @@ import androidx.compose.ui.graphics.Color
  * @param toastSuccess Toast背景颜色，成功状态下的Toast背景颜色
  * @param toastError Toast背景颜色，错误状态下的Toast背景颜色
  * @param homeBg 首页背景颜色
+ * @param selectedThemePrimary 选中状态下的主题主要色
  */
 @Immutable
 data class CustomColorPalette(
     val surface: Color = Color.Unspecified,
     val onSurface: Color = Color.Unspecified,
+    val surfaceVariant: Color = Color.Unspecified,
     val textTitle: Color = Color.Unspecified,
     val textPrimary: Color = Color.Unspecified,
     val textSecondary: Color = Color.Unspecified,
@@ -42,6 +44,8 @@ data class CustomColorPalette(
     val toastSuccess: Color = Color.Unspecified,
     val toastError: Color = Color.Unspecified,
     val homeBg: Color = Color.Unspecified,
+    val selectedThemePrimary: Color = Color.Unspecified,
+    val divider: Color = Color.Unspecified
 )
 
 val LocalColor = staticCompositionLocalOf { CustomColorPalette() }
@@ -52,6 +56,7 @@ val COLOR_F7F7F7 = Color(0xFFF7F7F7)
 /*              亮色            */
 val COLOR_SURFACE = Color(0xFFFFFFFF)
 val COLOR_ON_SURFACE = Color(0xFF333333)
+val COLOR_SURFACE_VARIANT = Color(0xFFF8F9FD)
 val COLOR_TEXT_PRIMARY = Color(0xFF333333)
 val COLOR_TEXT_SECONDARY = Color(0xFF666666)
 val COLOR_TEXT_HINT = Color(0xFF999999)
@@ -63,11 +68,14 @@ val COLOR_TOAST_BG = Color(0xFF999999)
 val COLOR_TOAST_SUCCESS = Color(0xFF7FBF97)
 val COLOR_TOAST_ERROR = Color(0xFFFF4545)
 val COLOR_TEXT_ERROR = Color(0xFFDC3545)
+val COLOR_SELECTED_THEME_PRIMARY = Color(0x0D3A94FF)
+val COLOR_DIVIDER = Color(0xFFF0F2F7)
 
 
 /*              暗色            */
 val COLOR_SURFACE_DARK = Color(0xFF1A1A1A)
 val COLOR_ON_SURFACE_DARK = Color(0xFFFFFFFF)
+val COLOR_SURFACE_VARIANT_DARK = Color(0xFF2A2A2A)
 val COLOR_TEXT_PRIMARY_DARK = Color(0xFFFFFFFF)
 val COLOR_TEXT_SECONDARY_DARK = Color(0xFFCCCCCC)
 val COLOR_TEXT_HINT_DARK = Color(0xFF808080)
@@ -79,6 +87,8 @@ val COLOR_TOAST_BG_DARK = Color(0xFF444444)
 val COLOR_TOAST_SUCCESS_DARK = Color(0xFF4CAF50)
 val COLOR_TOAST_ERROR_DARK = Color(0xFFFF7F7F)
 val COLOR_TEXT_ERROR_DARK = Color(0xFFFF453A)
+val COLOR_SELECTED_THEME_PRIMARY_DARK = Color(0x0D1E5AA8)
+val COLOR_DIVIDER_DARK = Color(0xFF262626)
 
 /**
  * 自定义亮色主题颜色
@@ -86,6 +96,7 @@ val COLOR_TEXT_ERROR_DARK = Color(0xFFFF453A)
 val LedgerLightColorScheme = CustomColorPalette(
     surface = COLOR_SURFACE,
     onSurface = COLOR_ON_SURFACE,
+    surfaceVariant = COLOR_SURFACE_VARIANT,
     textTitle = Color.Black,
     textPrimary = COLOR_TEXT_PRIMARY,
     textSecondary = COLOR_TEXT_SECONDARY,
@@ -99,7 +110,9 @@ val LedgerLightColorScheme = CustomColorPalette(
     toastBg = COLOR_TOAST_BG,
     toastSuccess = COLOR_TOAST_SUCCESS,
     toastError = COLOR_TOAST_ERROR,
-    homeBg = COLOR_F7F7F7
+    homeBg = COLOR_F7F7F7,
+    selectedThemePrimary = COLOR_SELECTED_THEME_PRIMARY,
+    divider = COLOR_DIVIDER
 )
 
 /**
@@ -108,6 +121,7 @@ val LedgerLightColorScheme = CustomColorPalette(
 val LedgerDarkColorScheme = CustomColorPalette(
     surface = COLOR_SURFACE_DARK,
     onSurface = COLOR_ON_SURFACE_DARK,
+    surfaceVariant = COLOR_SURFACE_VARIANT_DARK,
     textTitle = Color.White,
     textPrimary = COLOR_TEXT_PRIMARY_DARK,
     textSecondary = COLOR_TEXT_SECONDARY_DARK,
@@ -121,5 +135,7 @@ val LedgerDarkColorScheme = CustomColorPalette(
     toastBg = COLOR_TOAST_BG_DARK,
     toastSuccess = COLOR_TOAST_SUCCESS_DARK,
     toastError = COLOR_TOAST_ERROR_DARK,
-    homeBg = COLOR_SURFACE_DARK
+    homeBg = COLOR_SURFACE_DARK,
+    selectedThemePrimary = COLOR_SELECTED_THEME_PRIMARY_DARK,
+    divider = COLOR_DIVIDER_DARK
 )

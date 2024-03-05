@@ -1,25 +1,17 @@
 package ui.screen.home
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.decompose.value.update
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.lifecycle.doOnCreate
 import com.arkivanov.essenty.lifecycle.doOnResume
-import com.arkivanov.essenty.statekeeper.consume
 import core.data.net.ResNet
 import core.data.repository.BillRepositoryImpl
 import core.domain.repository.BillRepository
 import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.utils.monthDays
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.number
-import ui.widget.ToastState
 
 /**
  * 首页VM
@@ -29,24 +21,19 @@ import ui.widget.ToastState
  */
 class HomeVM(
     componentContext: ComponentContext,
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val billRepository: BillRepository = BillRepositoryImpl()
 ) : BaseComponent<HomeState, HomeEvent, HomeEffect>(componentContext) {
 
-    var cacheState = stateKeeper.consume(key = HomeState::class.simpleName ?: "HomeState", strategy = HomeState.serializer()) ?: HomeState()
-
     init {
-        stateKeeper.register(key = HomeState::class.simpleName ?: "HomeState", strategy = HomeState.serializer()){
-            cacheState
-        }
-        lifecycle.doOnCreate {
+        lifecycle.doOnResume {
             onEvent(HomeEvent.QueryBillList)
         }
     }
 
 
     override fun initialState(): HomeState {
-        return cacheState
+        return HomeState()
     }
 
     override fun onEvent(event: HomeEvent) {
@@ -57,9 +44,7 @@ class HomeVM(
                 updateState {
                     it.copy(
                         visibleFilter = !it.visibleFilter
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -74,9 +59,7 @@ class HomeVM(
                                 homeLedgerItem
                             }
                         }
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -85,9 +68,7 @@ class HomeVM(
                 updateState {
                     it.copy(
                         currentAccountIndex = event.index
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -101,9 +82,7 @@ class HomeVM(
                             it.currentDateIndex
                         },
                         visibleMonthPicker = event.visible
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -112,9 +91,7 @@ class HomeVM(
                 updateState {
                     it.copy(
                         currentTypeIndex = event.index
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -136,9 +113,7 @@ class HomeVM(
                             )
                         },
                         visibleMonthPicker = false
-                    ).apply {
-                        cacheState = this
-                    }
+                    )
                 }
             }
 
@@ -165,7 +140,7 @@ class HomeVM(
                     else -> "${accountDate.year}-${accountDate.monthNumber}-${accountDate.dayOfMonth}"
                 }
                 // 账户类型
-                val typeId = when (state.value.currentAccountIndex) {
+                val accountType = when (state.value.currentAccountIndex) {
                     0 -> null
                     1 -> "00"
                     else -> "01"
@@ -173,7 +148,7 @@ class HomeVM(
                 getBillList(
                     beginTime = beginTime,
                     endTime = endTime,
-                    typeId = typeId,
+                    accountType = accountType,
                     typeTag = typeTag
                 )
             }
@@ -186,41 +161,38 @@ class HomeVM(
      * @param beginTime 开始时间 yyyy-MM-dd
      * @param endTime 结束时间 yyyy-MM-dd
      * @param billName 账单名称
-     * @param typeId 消费类型Id null-全部，00-电子账户，01-储蓄账户
+     * @param accountType 消费类型Id null-全部，00-电子账户，01-储蓄账户
      * @param typeTag 消费类型标签 null-全部 0-支出 1-收入
      */
     private fun getBillList(
         beginTime: String? = null,
         endTime: String? = null,
         billName: String? = null,
-        typeId: String? = null,
+        accountType: String? = null,
         typeTag: String? = null
     ) {
         updateState {
             it.copy(
                 isLoading = true,
                 visibleFilter = false
-            ).apply {
-                cacheState = this
-            }
+            )
         }
         scope.launch {
             val result = billRepository.getBill(
                 beginTime = beginTime,
                 endTime = endTime,
                 billName = billName,
-                typeId = typeId,
+                accountType = accountType,
                 typeTag = typeTag
             )
             when (result) {
                 is ResNet.Success -> {
+                    delay(500)
                     updateState { state ->
                         state.copy(
                             isLoading = false,
                             list = result.data ?: emptyList()
-                        ).apply {
-                            cacheState = this
-                        }
+                        )
                     }
                 }
 
@@ -228,11 +200,9 @@ class HomeVM(
                     updateState {
                         it.copy(
                             isLoading = false
-                        ).apply {
-                            cacheState = this
-                        }
+                        )
                     }
-                    navigationListener.toastError(result.msg ?: "获取账单失败")
+                    rootComponent.toastError(result.msg ?: "获取账单失败")
                 }
             }
         }

@@ -18,7 +18,6 @@ import core.navigation.UiEffect
 import core.utils.KeyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ui.widget.ToastState
 
 /**
  * 登录组件
@@ -28,7 +27,7 @@ import ui.widget.ToastState
  */
 class LoginVM(
     componentContext: ComponentContext,
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationPassword: ValidationPassword = ValidationPassword(),
@@ -63,7 +62,7 @@ class LoginVM(
 
     override fun onEvent(event: LoginEvent) {
         when (event) {
-            LoginEvent.GoBack -> navigationListener.onBack()
+            LoginEvent.GoBack -> rootComponent.onBack()
 
             is LoginEvent.UpdateTerms -> {
                 updateState {
@@ -81,11 +80,11 @@ class LoginVM(
                 login()
             }
 
-            is LoginEvent.ActivateAccount -> navigationListener.onNavigationToScreenActivateAccount(event.username)
-            is LoginEvent.ForgetPassword -> navigationListener.onNavigationToScreenForgetPwd(username)
-            LoginEvent.PrivacyPolicy -> navigationListener.onNavigationToScreenAgreement(IRootComponent.TYPE_AGREEMENT_PRIVACY)
-            is LoginEvent.Register -> navigationListener.onNavigationToScreenRegister(event.username)
-            LoginEvent.UserAgreement -> navigationListener.onNavigationToScreenAgreement(IRootComponent.TYPE_AGREEMENT_USER)
+            is LoginEvent.ActivateAccount -> rootComponent.onNavigationToScreenActivateAccount(event.username)
+            is LoginEvent.ForgetPassword -> rootComponent.onNavigationToScreenForgetPwd(username)
+            LoginEvent.PrivacyPolicy -> rootComponent.onNavigationToScreenAgreement(IRootComponent.TYPE_AGREEMENT_PRIVACY)
+            is LoginEvent.Register -> rootComponent.onNavigationToScreenRegister(event.username)
+            LoginEvent.UserAgreement -> rootComponent.onNavigationToScreenAgreement(IRootComponent.TYPE_AGREEMENT_USER)
         }
     }
 
@@ -150,7 +149,7 @@ class LoginVM(
                     errorCaptcha = codeResult.errorMessage
                 )
             }
-            navigationListener.toastError(termsResult.errorMessage ?: "")
+            rootComponent.toastError(termsResult.errorMessage ?: "")
             return
         }
         updateState {
@@ -174,7 +173,7 @@ class LoginVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                     getCodeImage()
                 }
 
@@ -186,9 +185,9 @@ class LoginVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastSuccess("登录成功")
+                    rootComponent.toastSuccess("登录成功")
                     launch(Dispatchers.Main){
-                        navigationListener.onNavigationToScreenMain()
+                        rootComponent.onNavigationToScreenMain()
                     }
                 }
             }
@@ -202,7 +201,7 @@ class LoginVM(
         scope.launch {
             when (val resp = repository.codeImage()) {
                 is ResNet.Error -> {
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                 }
 
                 is ResNet.Success -> {

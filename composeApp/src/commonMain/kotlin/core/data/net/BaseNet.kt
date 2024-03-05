@@ -84,6 +84,7 @@ suspend inline fun <reified T> post(url: String, body: Any? = null): ResNet<T> {
             ResNet.Error(response.msg ?: "未知异常，请重试", response.code, response.data)
         }
     } catch (e: Exception) {
+        e.printStackTrace()
         e.toResNet()
     }
 }

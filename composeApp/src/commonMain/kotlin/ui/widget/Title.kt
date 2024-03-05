@@ -69,14 +69,18 @@ fun LedgerTitle(
         // 菜单
         if (!menu.isNullOrBlank()){
             FillGradationMenuButton(
+                modifier = Modifier
+                    .padding(end = 15.dp)
+                    .align(alignment = Alignment.CenterEnd),
                 text = menu,
                 onClick = onMenu
             )
         }
         Divider(
             modifier = Modifier.fillMaxWidth()
-                .height(0.5.dp)
+                .height(1.dp)
                 .align(alignment = Alignment.BottomCenter),
+            color = LocalColor.current.divider
         )
     }
 }

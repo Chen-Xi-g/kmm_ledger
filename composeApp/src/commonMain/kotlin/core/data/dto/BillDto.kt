@@ -110,7 +110,23 @@ data class UserPayTypeDto(
     @SerialName("parentId")
     val parentId: Long = 0,
     @SerialName("typeName")
-    val typeName: String = "",
+    val typeName: String = "无",
     @SerialName("typeTag")
-    val typeTag: String = ""
+    val typeTag: String = "",
+    @SerialName("child")
+    val child: List<UserPayTypeDto> = emptyList()
+)
+
+/**
+ * 修改账单类型排序
+ *
+ * @property typeTag 类型标签（0代表支出 1代表收入）
+ * @property typeIds 类型id列表
+ */
+@Serializable
+data class ChangePayTypeSortDto(
+    @SerialName("typeTag")
+    val typeTag: String = "",
+    @SerialName("typeIds")
+    val typeIds: List<Long> = emptyList()
 )

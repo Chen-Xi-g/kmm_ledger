@@ -161,7 +161,7 @@ private fun Modifier.toastGesturesDetector(
     val offsetY = remember { Animatable(0f) }
     val alpha = remember { Animatable(1f) }
 
-    pointerInput(Unit) {
+                pointerInput(Unit) {
         val decay = splineBasedDecay<Float>(this)
         coroutineScope {
             while (true) {

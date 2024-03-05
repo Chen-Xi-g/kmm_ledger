@@ -14,7 +14,7 @@ import core.navigation.UiState
  */
 class GuideVM(
     componentContext: ComponentContext,
-    private val navigationListener: IRootComponent
+    private val rootComponent: IRootComponent
 ) : BaseComponent<UiState, GuideEvent, UiEffect>(componentContext) {
     override fun initialState(): UiState {
         return object : UiState {}
@@ -23,7 +23,7 @@ class GuideVM(
     override fun onEvent(event: GuideEvent) {
         when (event) {
             GuideEvent.ClickButton -> {
-                navigationListener.onNavigationReplaceToScreenMain()
+                rootComponent.onNavigationReplaceToScreenMain()
             }
         }
     }

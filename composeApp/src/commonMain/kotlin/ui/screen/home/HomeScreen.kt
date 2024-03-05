@@ -87,6 +87,8 @@ import ui.theme.LocalDrawable
 import ui.widget.FillGradationButton
 import ui.widget.FilterDateTimePicker
 import ui.widget.gradationBrush
+import ui.widget.refresh.PullRefreshLayout
+import ui.widget.refresh.rememberPullRefreshState
 import kotlin.random.Random
 
 /**
@@ -115,7 +117,16 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
-            HomeContent(listState, state.list, component::onEvent, component::onEffect)
+            val refreshState = rememberPullRefreshState(
+                refreshing = state.isLoading,
+                onRefresh = { component.onEvent(HomeEvent.QueryBillList) }
+            )
+            PullRefreshLayout(
+                modifier = Modifier.fillMaxSize(),
+                state = refreshState
+            ){
+                HomeContent(listState, state.list, component::onEvent, component::onEffect)
+            }
         } else {
 //            HomeContent(state.list, component::onEvent)
         }
@@ -645,8 +656,8 @@ private fun HomeDetailChild(
             HomeDetailChildItem(item)
             if (index != child.lastIndex) {
                 Divider(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = LocalColor.current.surface
+                    modifier = Modifier.height(1.dp),
+                    color = LocalColor.current.divider
                 )
             }
         }
@@ -670,21 +681,25 @@ private fun HomeDetailChildItem(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // 封面
-        Image(
-            painter = when (val cover = asyncPainterResource(item.cover)) {
-                is Resource.Success -> {
-                    cover.value
-                }
-
-                else -> {
-                    painterResource(LocalDrawable.current.logo)
-                }
-            },
-            modifier = Modifier
-                .size(43.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            contentDescription = null
-        )
+        Box(
+            modifier = Modifier.size(43.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(LocalDrawable.current.homeListType),
+                modifier = Modifier
+                    .size(43.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                contentDescription = null
+            )
+            Text(
+                text = item.billTypeName,
+                color = Color.White,
+                fontSize = 14.sp,
+                maxLines = 2,
+                lineHeight = 18.sp
+            )
+        }
 
         // 内容
         Column {

@@ -89,6 +89,13 @@ fun String.toHourMinute(): String {
 }
 
 /**
+ * LocalDate转换为 yyyy-MM-dd
+ */
+fun LocalDate.toDateString(): String {
+    return "${this.year}-${this.monthNumber.addZero()}-${this.dayOfMonth.addZero()}"
+}
+
+/**
  * 小于10的数字前面加0
  */
 fun Int.addZero(): String {

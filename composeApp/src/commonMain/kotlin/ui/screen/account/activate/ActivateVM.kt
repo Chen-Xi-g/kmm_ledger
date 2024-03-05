@@ -14,7 +14,6 @@ import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
-import ui.widget.ToastState
 
 /**
  * 激活账号
@@ -24,7 +23,7 @@ import ui.widget.ToastState
  */
 class ActivateVM(
     componentContext: ComponentContext,
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
     private val validationUsername: ValidationUsername = ValidationUsername(),
     private val validationCode: ValidationCode = ValidationCode()
@@ -54,7 +53,7 @@ class ActivateVM(
     override fun onEvent(event: ActivateEvent) {
         when(event){
             ActivateEvent.GoBack -> {
-                navigationListener.onBack()
+                rootComponent.onBack()
             }
             ActivateEvent.Submit -> {
                 submit()
@@ -129,7 +128,7 @@ class ActivateVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                     getCodeImage()
                 }
                 is ResNet.Success -> {
@@ -138,7 +137,7 @@ class ActivateVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastSuccess(resp.msg)
+                    rootComponent.toastSuccess(resp.msg)
                 }
             }
         }
@@ -151,7 +150,7 @@ class ActivateVM(
         scope.launch {
             when(val resp = repository.codeImage()){
                 is ResNet.Error -> {
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {
@@ -160,7 +159,7 @@ class ActivateVM(
                             uuid = resp.data?.uuid ?: ""
                         )
                     }
-                    navigationListener.toastSuccess(resp.msg)
+                    rootComponent.toastSuccess(resp.msg)
                 }
             }
         }

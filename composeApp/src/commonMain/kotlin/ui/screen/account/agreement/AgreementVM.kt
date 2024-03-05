@@ -9,7 +9,6 @@ import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.navigation.UiEffect
 import kotlinx.coroutines.launch
-import ui.widget.ToastState
 
 /**
  * 系统协议
@@ -22,7 +21,7 @@ import ui.widget.ToastState
 class AgreementVM(
     component: ComponentContext,
     private val type: Int,
-    private val navigationListener: IRootComponent,
+    private val rootComponent: IRootComponent,
     private val repository: AccountRepository = AccountRepositoryImpl(),
 ) :
     BaseComponent<AgreementState, AgreementEvent, UiEffect>(component) {
@@ -42,7 +41,7 @@ class AgreementVM(
     override fun onEvent(event: AgreementEvent) {
         when (event) {
             AgreementEvent.GoBack -> {
-                navigationListener.onBack()
+                rootComponent.onBack()
             }
 
             is AgreementEvent.LoadAgreement -> {
@@ -53,7 +52,7 @@ class AgreementVM(
 
     private fun loadAgreement() {
         if (type != 1 && type != 2) {
-            navigationListener.toastError("协议类型错误")
+            rootComponent.toastError("协议类型错误")
             return
         }
         updateState {
@@ -69,7 +68,7 @@ class AgreementVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastError(resp.msg)
+                    rootComponent.toastError(resp.msg)
                 }
                 is ResNet.Success -> {
                     updateState {
@@ -78,7 +77,6 @@ class AgreementVM(
                             isLoading = false
                         )
                     }
-                    navigationListener.toastSuccess(resp.msg)
                 }
             }
         }

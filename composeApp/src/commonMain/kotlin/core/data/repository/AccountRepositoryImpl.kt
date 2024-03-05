@@ -4,6 +4,8 @@ import core.data.api.NetApi
 import core.data.dto.AgreementDto
 import core.data.dto.CodeImageDto
 import core.data.dto.TokenDto
+import core.data.dto.UserAccountDto
+import core.data.dto.UserInfoDto
 import core.data.net.ResNet
 import core.data.net.get
 import core.data.net.post
@@ -70,6 +72,26 @@ class AccountRepositoryImpl: AccountRepository{
         return get<AgreementDto>(req.url){
             put("type", type.toString())
         }.toAgreement()
+    }
+
+    override suspend fun logout(): ResNet<String> {
+        val req = NetApi.AccountApi.Logout
+        return post(req.url)
+    }
+
+    override suspend fun userInfo(): ResNet<UserInfoDto> {
+        val req = NetApi.AccountApi.UserInfo
+        return get<UserInfoDto>(req.url)
+    }
+
+    override suspend fun modifyUserInfo(nickName: String): ResNet<String> {
+        val req = NetApi.AccountApi.ChangeNickName(nickName)
+        return post(req.url)
+    }
+
+    override suspend fun accountList(): ResNet<List<UserAccountDto>> {
+        val req = NetApi.AccountApi.AccountList
+        return get(req.url)
     }
 
 }

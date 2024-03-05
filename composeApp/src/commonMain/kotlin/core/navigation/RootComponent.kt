@@ -4,13 +4,19 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.items
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
+import core.data.dto.UserAccountDto
+import core.domain.entity.BillDetailEntity
+import core.domain.entity.PayTypeEntity
 import core.utils.GlobalNavigator
 import core.utils.GlobalNavigatorListener
 import core.utils.KeyRepository
@@ -29,6 +35,12 @@ import ui.screen.guide.GuideVM
 import ui.screen.guide.splash.SplashVM
 import ui.widget.ToastState
 import core.navigation.IRootComponent.Child
+import ui.screen.add.bill.AddBillVM
+import ui.screen.payType.PayTypeManagerVM
+import ui.screen.setting.SettingVM
+import ui.screen.setting.account.AccountVM
+import ui.screen.setting.user.UserInfoVM
+import ui.screen.web.WebViewVM
 
 /**
  * 全局导航组件
@@ -88,6 +100,18 @@ class RootComponent(
             Configuration.Main -> Child.Main(MainVM(component, this))
             Configuration.Login -> Child.Login(LoginVM(component, this))
             Configuration.ActivateAccount -> Child.ActivateAccount(ActivateVM(component, this))
+            is Configuration.AccountManager -> Child.AccountManager(AccountVM(component, config.isSelect, this))
+            Configuration.Setting -> Child.Setting(SettingVM(component, this))
+            is Configuration.PayTypeManager -> Child.PayTypeManager(
+                PayTypeManagerVM(
+                    component,
+                    config.parentName,
+                    config.parentId,
+                    config.isSelect,
+                    this
+                )
+            )
+
             is Configuration.Register -> Child.Register(
                 RegisterVM(
                     component,
@@ -103,6 +127,7 @@ class RootComponent(
                     this
                 )
             )
+
             is Configuration.Agreement -> Child.Agreement(
                 AgreementVM(
                     component,
@@ -110,6 +135,31 @@ class RootComponent(
                     this
                 )
             )
+
+            is Configuration.WebView -> Child.WebView(
+                WebViewVM(
+                    component,
+                    config.url,
+                    config.title,
+                    this
+                )
+            )
+
+            Configuration.UserInfo -> Child.UserInfo(
+                UserInfoVM(
+                    component, this
+                )
+            )
+
+            is Configuration.AddBill -> {
+                Child.AddBill(
+                    AddBillVM(
+                        component,
+                        config.billDetail ?: BillDetailEntity(),
+                        this
+                    )
+                )
+            }
         }
     }
 
@@ -126,12 +176,14 @@ class RootComponent(
     }
 
     override fun onBack() {
-        if (childStack.items.size <= 1) {
-            // 退出到桌面
-            goHome()
-            return
+        scope.launch(Dispatchers.Main) {
+            if (childStack.items.size <= 1) {
+                // 退出到桌面
+                goHome()
+                return@launch
+            }
+            navigation.pop()
         }
-        navigation.pop()
     }
 
     override fun onNavigationToScreenGuide() {
@@ -162,8 +214,14 @@ class RootComponent(
         pushNew(Configuration.Register(username))
     }
 
-    override fun onNavigationToScreenLogin() {
-        pushNew(Configuration.Login)
+    override fun onNavigationToScreenLogin(isFinishAll: Boolean) {
+        if (isFinishAll) {
+            scope.launch {
+                navigation.replaceAll(Configuration.Login)
+            }
+        } else {
+            pushNew(Configuration.Login)
+        }
     }
 
     override fun onNavigationToScreenForgetPwd(username: String) {
@@ -176,6 +234,54 @@ class RootComponent(
 
     override fun onNavigationToScreenAgreement(type: Int) {
         pushNew(Configuration.Agreement(type))
+    }
+
+    override fun onNavigationToScreenPayTypeManager(isSelect: Boolean) {
+        pushNew(Configuration.PayTypeManager(isSelect = isSelect))
+    }
+
+    override fun onNavigationToScreenPayTypeSubManager(name: String, id: Long, isSelect: Boolean) {
+        pushNew(Configuration.PayTypeManager(name, id, isSelect))
+    }
+
+    override fun onNavigationToScreenAccountManager(isSelect: Boolean) {
+        pushNew(Configuration.AccountManager(isSelect))
+    }
+
+    override fun onNavigationToScreenSetting() {
+        pushNew(Configuration.Setting)
+    }
+
+    override fun onNavigationToScreenWebView(url: String, title: String) {
+        pushNew(Configuration.WebView(url, title))
+    }
+
+    override fun onNavigationToScreenUserInfo() {
+        pushNew(Configuration.UserInfo)
+    }
+
+    override fun onNavigationToScreenAddBill(billDetail: BillDetailEntity?) {
+        pushNew(Configuration.AddBill(billDetail))
+    }
+
+    override fun onSelectedPayType(item: PayTypeEntity, isIncome: Boolean) {
+        navigation.popWhile(
+            {
+                it !is Configuration.AddBill
+            }
+        ){
+            (stack.active.instance as? Child.AddBill)?.component?.onSelectedPayType(item, isIncome)
+        }
+    }
+
+    override fun onSelectedAccount(item: UserAccountDto) {
+        navigation.popWhile(
+            {
+                it !is Configuration.AddBill
+            }
+        ){
+            (stack.active.instance as? Child.AddBill)?.component?.onSelectAccount(item)
+        }
     }
 
     /**
@@ -231,6 +337,53 @@ class RootComponent(
          */
         @Serializable
         data class Agreement(val type: Int) : Configuration
+
+        /**
+         * 收支类型管理
+         *
+         * @param parentName 父级名称
+         * @param parentId 父级id
+         */
+        @Serializable
+        data class PayTypeManager(val parentName: String? = null, val parentId: Long? = null, val isSelect: Boolean = false) :
+            Configuration
+
+        /**
+         * 账户管理
+         *
+         * @param isSelect 是否选择
+         */
+        @Serializable
+        data class AccountManager(val isSelect: Boolean) : Configuration
+
+        /**
+         * 设置页面
+         */
+        @Serializable
+        data object Setting : Configuration
+
+        /**
+         * WebView
+         *
+         * @param url 链接
+         * @param title 标题
+         */
+        @Serializable
+        data class WebView(val url: String, val title: String) : Configuration
+
+        /**
+         * 用户资料
+         */
+        @Serializable
+        data object UserInfo : Configuration
+
+        /**
+         * 新增账单
+         *
+         * @param billDetail 账单详情
+         */
+        @Serializable
+        data class AddBill(val billDetail: BillDetailEntity? = null) : Configuration
     }
 
     /**
@@ -252,10 +405,6 @@ class RootComponent(
                 }
             }
         }
-    }
-
-    private fun showToast(msg: String?, style: ToastState.ToastStyle) {
-        toastState?.invoke(msg ?: "", style)
     }
 
 }

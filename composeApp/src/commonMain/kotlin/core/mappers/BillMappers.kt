@@ -15,23 +15,24 @@ import platform.format
  * 将账单列表的数据传输对象转换为页面数据
  */
 fun ResNet<List<BillListDto>>.toBillListVo(): ResNet<List<BillListEntity>> = mapData(
-    data?.map {
+    data?.mapIndexed { index, billListDto ->
         BillListEntity(
-            createTime = it.createTime.toFriendlyTime(),
-            expenditure = it.expenditure.toYuan(),
-            income = it.income.toYuan(),
-            children = it.children.map { child ->
+            createTime = billListDto.createTime.toFriendlyTime(),
+            expenditure = billListDto.expenditure.toYuan(),
+            income = billListDto.income.toYuan(),
+            children = billListDto.children.map { child ->
                 BillDetailListEntity(
                     billId = child.billId,
                     cover = if (child.imgIds.isNotEmpty()) child.imgIds.split(",")[0] else "",
                     billName = child.billName,
                     billRemark = child.remark,
                     billAmount = child.billAmount.toYuan(),
+                    billTypeName = child.userPayTypeDto.typeName.chunked(2).joinToString("\n"),
                     createTime = child.createTime.toHourMinute(),
                     isIncome = child.userPayTypeDto.typeTag == "1"
                 )
             },
-            isExpanded = false
+            isExpanded = index < 3
         )
     }
 )
@@ -44,6 +45,13 @@ fun Long.toYuan(): String {
 }
 
 /**
+ * 将String类型单位为元的金额转换为Long, 并将小数点去掉
+ */
+fun String.toFen(): Long {
+    return ((this.toDoubleOrNull() ?: 0.0) * 100).toLong()
+}
+
+/**
  * 消费类型传输对象转换为页面数据
  */
 fun ResNet<List<UserPayTypeDto>>.toPayTypeVo(): ResNet<List<PayTypeEntity>> = mapData(
@@ -51,7 +59,14 @@ fun ResNet<List<UserPayTypeDto>>.toPayTypeVo(): ResNet<List<PayTypeEntity>> = ma
         PayTypeEntity(
             typeId = it.typeId,
             parentId = it.parentId,
-            typeName = it.typeName
+            typeName = it.typeName,
+            child = it.child.map { child ->
+                PayTypeEntity(
+                    typeId = child.typeId,
+                    parentId = child.parentId,
+                    typeName = child.typeName
+                )
+            }
         )
     }
 )

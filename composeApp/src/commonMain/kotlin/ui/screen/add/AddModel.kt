@@ -4,6 +4,8 @@ import core.domain.entity.PayTypeEntity
 import core.navigation.UiEffect
 import core.navigation.UiEvent
 import core.navigation.UiState
+import core.utils.currentLocalDate
+import kotlinx.datetime.LocalDate
 
 /**
  * 新增账单 状态
@@ -12,20 +14,27 @@ import core.navigation.UiState
  * @date 2023/12/16-12:38
  *
  * @param isIncome 是否是收入, true: 收入, false: 支出
- * @param currentPayType 当前选中的消费类型
- * @param currentPayTypeChild 当前选中的消费类型子列表
+ * @param isKeyboardShow 键盘是否显示
+ * @param isSaveDialog 是否显示保存弹窗
+ * @param visibleDateTimePickerShow 日期选择器是否显示
+ * @param currentPayType 当前选中的消费类型索引
+ * @param currentPayTypeChild 当前选中的消费类型子列表索引
+ * @param keyboardList 键盘列表
  * @param types 消费类型列表
- * @param typeChildList 消费类型子列表
- * @param typeName 类型名称
  * @param isLoading 是否正在加载
  */
 data class AddState(
-    val isIncome: Boolean = true,
+    val isIncome: Boolean = false,
+    val isKeyboardShow: Boolean = true,
+    val isSaveDialog: Boolean = false,
+    val visibleDateTimePickerShow: Boolean = false,
+    val dateTime: LocalDate = currentLocalDate(),
     val currentPayType: Int = 0,
     val currentPayTypeChild: Int = 0,
+    val keyboardList: List<String> = listOf(
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "0", "."
+    ),
     val types: List<PayTypeEntity> = emptyList(),
-    val typeChildList: List<PayTypeEntity> = emptyList(),
-    val typeName: String = "",
     val isLoading: Boolean = false
 ): UiState
 
@@ -41,36 +50,69 @@ sealed interface AddEvent: UiEvent{
     data class SwitchIncome(val isIncome: Boolean): AddEvent
 
     /**
+     * 切换消费类型索引
+     *
+     * @param index 索引
+     */
+    data class SwitchPayType(val index: Int): AddEvent
+
+    /**
+     * 切换消费类型子列表索引
+     */
+    data class SwitchPayTypeChild(val index: Int): AddEvent
+
+    /**
+     * 切换键盘显示状态
+     */
+    data object SwitchKeyboard: AddEvent
+
+    /**
+     * 修改键盘输入内容
+     *
+     * @param content 键盘内容
+     */
+    data class ChangeKeyboardContent(val content: Char): AddEvent
+
+    /**
+     * 删除键盘输入内容
+     */
+    data object DeleteKeyboardContent: AddEvent
+
+    /**
+     * 修改账单日期
+     */
+    data class ChangeDate(val visible: Boolean, val dateTime: LocalDate? = currentLocalDate()): AddEvent
+
+    /**
+     * 键盘下一步
+     */
+    data object KeyboardNext: AddEvent
+
+    /**
      * 获取消费类型
      */
     data object GetPayType: AddEvent
 
     /**
-     * 获取消费类型子列表
-     *
-     * @param typeId 消费类型Id
+     * 跳转到收支类型
      */
-    data class GetPayTypeChild(val typeId: String): AddEvent
+    data object ToPayType: AddEvent
 
     /**
-     * 新增账单类型
-     *
-     * @param typeName 类型名称
+     * 填写更多账单信息
      */
-    data class AddPayType(val typeName: String): AddEvent
+    data object ToMoreInfo: AddEvent
 
     /**
-     * 新增账单类型子数据
-     *
-     * @param typeId 消费类型Id
-     * @param parentId 父级id
-     * @param typeName 类型名称
-     * @param typeTag 类型标签 0-支出 1-收入
+     * 保存账单
      */
-    data class AddPayTypeChild(val typeId: String,val parentId: String, val typeName: String, val typeTag: String): AddEvent
+    data object SaveBill: AddEvent
+
+    /**
+     * 取消保存账单
+     */
+    data object CancelSaveBill: AddEvent
 }
 
-/**
- * 新增账单 效果
- */
-sealed interface AddEffect: UiEffect
+sealed interface AddEffect: UiEffect{
+}

@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 class SplashVM(
     componentContext: ComponentContext,
-    private val navigationListener: IRootComponent
+    private val rootComponent: IRootComponent
 ) : BaseComponent<UiState, SplashEvent, UiEffect>(componentContext){
 
     init {
@@ -46,7 +46,7 @@ class SplashVM(
         when(event){
             SplashEvent.Skip -> {
                 countDownJob?.cancel()
-                navigationListener.onNavigationToScreenGuide()
+                rootComponent.onNavigationToScreenGuide()
             }
         }
     }
@@ -58,7 +58,7 @@ class SplashVM(
                 _countDown.value = _countDown.value - 1
                 if (_countDown.value <= 0) {
                     scope.launch(Dispatchers.Main){
-                        navigationListener.onNavigationToScreenGuide()
+                        rootComponent.onNavigationToScreenGuide()
                     }
                 }
                 delay(1.seconds)

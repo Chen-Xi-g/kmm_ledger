@@ -1,6 +1,8 @@
 package core.domain.repository
 
 import core.data.api.NetApi
+import core.data.dto.UserAccountDto
+import core.data.dto.UserInfoDto
 import core.data.net.ResNet
 import core.domain.entity.CodeImageEntity
 
@@ -70,4 +72,26 @@ interface AccountRepository {
      * @param type 协议类型 1:用户协议 2:隐私政策
      */
     suspend fun agreement(type: Int): ResNet<String>
+
+    /**
+     * 登出
+     */
+    suspend fun logout(): ResNet<String>
+
+    /**
+     * 获取用户信息
+     */
+    suspend fun userInfo(): ResNet<UserInfoDto>
+
+    /**
+     * 修改昵称
+     *
+     * @param nickName 昵称
+     */
+    suspend fun modifyUserInfo(nickName: String): ResNet<String>
+
+    /**
+     * 获取我的账户列表
+     */
+    suspend fun accountList(): ResNet<List<UserAccountDto>>
 }
