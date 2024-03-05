@@ -5,10 +5,14 @@ import com.arkivanov.essenty.lifecycle.doOnCreate
 import com.arkivanov.essenty.lifecycle.doOnResume
 import core.data.net.ResNet
 import core.data.repository.BillRepositoryImpl
+import core.domain.entity.BillDetailEntity
+import core.domain.entity.PayTypeEntity
 import core.domain.repository.BillRepository
+import core.mappers.toFen
 import core.navigation.BaseComponent
 import core.navigation.IRootComponent
 import core.utils.monthDays
+import core.utils.toLocalDateTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -150,6 +154,27 @@ class HomeVM(
                     endTime = endTime,
                     accountType = accountType,
                     typeTag = typeTag
+                )
+            }
+
+            // 账单点击事件
+            is HomeEvent.BillItemClick -> {
+                rootComponent.onNavigationToScreenAddBill(
+                    billDetail = BillDetailEntity(
+                        billName = event.item.billName,
+                        billAmount = event.item.billAmount.toFen(),
+                        createTime = event.item.createTime.toLocalDateTime().date,
+                        payTypeEntity = PayTypeEntity(
+                            typeId = event.item.userPayTypeDto.typeId,
+                            typeName = event.item.userPayTypeDto.typeName,
+                            parentId = event.item.userPayTypeDto.parentId
+                        ),
+                        isIncome = event.item.isIncome,
+                        billId = event.item.billId,
+                        accountEntity = event.item.userAccountDto,
+                        isAdd = false,
+                        remark = event.item.billRemark
+                    )
                 )
             }
         }

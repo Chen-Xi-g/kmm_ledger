@@ -43,7 +43,8 @@ interface BillRepository {
         billAmount: Long = 0,
         typeId: Long = 0,
         accountId: Long? = null,
-        remark: String? = null
+        remark: String? = null,
+        billId: String? = null
     ): ResNet<String>
 
     /**

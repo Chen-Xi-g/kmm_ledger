@@ -194,7 +194,8 @@ sealed class NetApi(val url: String) {
             val billAmount: String,
             val typeId: String,
             val accountId: String? = null,
-            val remark: String? = null
+            val remark: String? = null,
+            val billId: String? = null
         ) : BillApi("addOrUpdateBill".base_path) {
             fun toMap(): Map<String, String> {
                 val map = mutableMapOf<String, String>()
@@ -206,6 +207,9 @@ sealed class NetApi(val url: String) {
                 }
                 if (!remark.isNullOrBlank() && remark != "null") {
                     map["remark"] = remark
+                }
+                if (!billId.isNullOrBlank() && billId != "null") {
+                    map["billId"] = billId
                 }
                 return map
             }

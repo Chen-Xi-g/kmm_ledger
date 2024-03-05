@@ -75,6 +75,7 @@ import core.utils.Res.strings.str_no_bill
 import core.utils.Res.strings.str_no_more
 import core.utils.Res.strings.str_pack_up
 import core.utils.Res.strings.str_query
+import core.utils.toHourMinute
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -116,19 +117,15 @@ fun HomeScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
-            val refreshState = rememberPullRefreshState(
-                refreshing = state.isLoading,
-                onRefresh = { component.onEvent(HomeEvent.QueryBillList) }
-            )
-            PullRefreshLayout(
-                modifier = Modifier.fillMaxSize(),
-                state = refreshState
-            ){
-                HomeContent(listState, state.list, component::onEvent, component::onEffect)
-            }
-        } else {
-//            HomeContent(state.list, component::onEvent)
+        val refreshState = rememberPullRefreshState(
+            refreshing = state.isLoading,
+            onRefresh = { component.onEvent(HomeEvent.QueryBillList) }
+        )
+        PullRefreshLayout(
+            modifier = Modifier.fillMaxSize(),
+            state = refreshState
+        ){
+            HomeContent(listState, state.list, component::onEvent, component::onEffect)
         }
     }
     // 筛选
@@ -288,13 +285,13 @@ private fun HomeItemEmptyContent() {
 @OptIn(ExperimentalResourceApi::class)
 private fun HomeDetailHeaderContent(onEvent: (HomeEvent) -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .background(LocalColor.current.surface),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier
-                .background(LocalColor.current.surface)
                 .padding(vertical = 10.dp, horizontal = 15.dp),
             text = str_bill_detail,
             fontSize = 18.sp,
@@ -630,7 +627,7 @@ private fun HomeDetailItem(
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        HomeDetailChild(item.children)
+        HomeDetailChild(item.children, onEvent)
     }
 }
 
@@ -639,7 +636,8 @@ private fun HomeDetailItem(
  */
 @Composable
 private fun HomeDetailChild(
-    child: List<BillDetailListEntity>
+    child: List<BillDetailListEntity>,
+    onEvent: (HomeEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -653,7 +651,7 @@ private fun HomeDetailChild(
     ) {
         child.forEachIndexed { index, item ->
             // 子列表Item
-            HomeDetailChildItem(item)
+            HomeDetailChildItem(item, onEvent)
             if (index != child.lastIndex) {
                 Divider(
                     modifier = Modifier.height(1.dp),
@@ -670,13 +668,15 @@ private fun HomeDetailChild(
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun HomeDetailChildItem(
-    item: BillDetailListEntity
+    item: BillDetailListEntity,
+    onEvent: (HomeEvent) -> Unit
 ) {
     Row(
         modifier = Modifier
             .height(73.dp)
             .fillMaxWidth()
-            .padding(horizontal = 15.dp),
+            .padding(horizontal = 15.dp)
+            .clickable { onEvent(HomeEvent.BillItemClick(item)) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -746,7 +746,7 @@ private fun HomeDetailChildItem(
                     textAlign = TextAlign.Start
                 )
                 Text(
-                    text = item.createTime,
+                    text = item.createTime.toHourMinute(),
                     fontSize = 13.sp,
                     color = LocalColor.current.textHint,
                     maxLines = 1,

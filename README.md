@@ -21,5 +21,11 @@
 
 ## 应用截图
 
-| Android | iOS | Desktop |
-| :---: | :---: | :---: |
+**首页**
+![首页](/images/home.png)
+
+**新增账单**
+![新增账单](/images/add.png)
+
+**我的**
+![我的](/images/mine.png)

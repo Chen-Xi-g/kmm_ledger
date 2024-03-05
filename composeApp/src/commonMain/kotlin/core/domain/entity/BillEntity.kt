@@ -1,7 +1,10 @@
 package core.domain.entity
 
+import core.data.dto.UserAccountDto
+import core.data.dto.UserPayTypeDto
 import core.utils.currentLocalDate
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -42,7 +45,9 @@ data class BillDetailListEntity(
     val billAmount: String = "",
     val billTypeName: String = "",
     val createTime: String = "",
-    val isIncome: Boolean = false
+    val isIncome: Boolean = false,
+    val userAccountDto: UserAccountDto = UserAccountDto(),
+    val userPayTypeDto: UserPayTypeDto = UserPayTypeDto()
 )
 
 /**
@@ -105,7 +110,6 @@ data class AccountEntity(
  * @property isIncome 是否是收入(true:收入, false:支出)
  * @property billId 账单id(修改时传入)
  * @property address 地址
- * @property accountId 账户id
  * @property latitude 纬度
  * @property longitude 经度
  * @property remark 备注
@@ -114,12 +118,13 @@ data class AccountEntity(
 @Serializable
 data class BillDetailEntity(
     val billAmount: Long = 0,
+    val billName: String = "",
     val createTime: LocalDate = currentLocalDate(),
     val payTypeEntity: PayTypeEntity = PayTypeEntity(),
+    val accountEntity: UserAccountDto? = null,
     val isIncome: Boolean = false,
     val billId: Long? = null,
     val address: String? = null,
-    val accountId: Long? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
     val remark: String? = null,

@@ -221,11 +221,11 @@ private fun MineMenuContent(
                 onEvent(MineEvent.ToAccount)
             }
         }
-        item("bill"){
-            MineMenuItemContent(painterResource(LocalDrawable.current.bill), Res.strings.str_mine_bill){
-
-            }
-        }
+//        item("bill"){
+//            MineMenuItemContent(painterResource(LocalDrawable.current.bill), Res.strings.str_mine_bill){
+//
+//            }
+//        }
 //        item("borrow"){
 //            MineMenuItemContent(painterResource(LocalDrawable.current.borrow), Res.strings.str_borrow)
 //        }
@@ -295,7 +295,21 @@ private fun MineContentLarge(
     state: MineState,
     onEvent: (MineEvent) -> Unit
 ) {
-    Text(text = "我的")
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.weight(1F)
+        ) {
+            MineHeaderContent(state,onEvent)
+            MineAccountInfoContent(onEvent)
+        }
+        Column(
+            modifier = Modifier.weight(1F)
+        ) {
+            MineMenuContent(onEvent)
+        }
+    }
 }
 
 @Preview

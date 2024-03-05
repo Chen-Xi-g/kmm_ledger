@@ -51,11 +51,7 @@ fun AccountScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
-            AccountContent(state, component::onEvent)
-        } else {
-            AccountContentLarge(state, component::onEvent)
-        }
+        AccountContent(state, component::onEvent)
     }
 }
 

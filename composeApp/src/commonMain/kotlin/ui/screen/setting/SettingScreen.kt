@@ -1,6 +1,7 @@
 package ui.screen.setting
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import ui.theme.LedgerTheme
 import ui.theme.LocalColor
 import ui.widget.FillGradationButton
 import ui.widget.LedgerTitle
+import ui.widget.LogoTextWidget
 
 /**
  * 设置页面 屏幕
@@ -44,11 +46,7 @@ fun SettingScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
-            SettingContent(state, component::onEvent)
-        } else {
-            SettingContentLarge(state, component::onEvent)
-        }
+        SettingContent(state, component::onEvent)
     }
 }
 

@@ -57,11 +57,7 @@ fun AddBillScreen(
         modifier = Modifier.fillMaxSize()
             .safeArea()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
-            AddBillContent(component, state, component::onEvent)
-        } else {
-            AddBillContentLarge(state, component::onEvent)
-        }
+        AddBillContent(component, state, component::onEvent)
     }
 }
 
@@ -76,7 +72,7 @@ private fun AddBillContent(
 ) {
     Column {
         LedgerTitle(
-            title = Res.strings.str_new_bill,
+            title = state.title,
             menu = Res.strings.str_save,
             onBack = {
                 onEvent(AddBillEvent.Back)

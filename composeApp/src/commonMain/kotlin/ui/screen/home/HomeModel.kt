@@ -1,6 +1,7 @@
 package ui.screen.home
 
 import core.domain.entity.AccountEntity
+import core.domain.entity.BillDetailListEntity
 import core.domain.entity.BillListEntity
 import core.domain.entity.DateEntity
 import core.domain.entity.TypeEntity
@@ -115,6 +116,13 @@ sealed interface HomeEvent : UiEvent {
      * 查询账单列表
      */
     data object QueryBillList : HomeEvent
+
+    /**
+     * 账单点击事件
+     */
+    data class BillItemClick(
+        val item: BillDetailListEntity
+    ) : HomeEvent
 }
 
 /**

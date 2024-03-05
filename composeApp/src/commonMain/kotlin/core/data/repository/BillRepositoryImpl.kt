@@ -45,14 +45,16 @@ class BillRepositoryImpl : BillRepository {
         billAmount: Long,
         typeId: Long,
         accountId: Long?,
-        remark: String?
+        remark: String?,
+        billId: String?
     ): ResNet<String> {
         val req = NetApi.BillApi.AddBill(
             billName = billName,
             billAmount = billAmount.toString(),
             typeId = typeId.toString(),
             accountId = accountId.toString(),
-            remark = remark
+            remark = remark,
+            billId = billId
         )
         return post(req.url, req.toMap())
     }

@@ -45,6 +45,8 @@ class AddBillVM(
         } else {
             billDetail.billAmount.toYuan()
         }
+        billName = billDetail.billName
+        remark = billDetail.remark ?: ""
         return AddBillState(
             title = if (billDetail.isAdd) Res.strings.str_new_bill else Res.strings.str_bill_detail,
             billAmount = billDetail.billAmount,
@@ -54,7 +56,8 @@ class AddBillVM(
             billId = billDetail.billId,
             address = billDetail.address,
             latitude = billDetail.latitude,
-            longitude = billDetail.longitude
+            longitude = billDetail.longitude,
+            account = billDetail.accountEntity,
         )
     }
 
@@ -108,7 +111,8 @@ class AddBillVM(
                 billAmount = amount.toFen(),
                 typeId = state.payTypeEntity.typeId,
                 accountId = state.account?.id,
-                remark = remark
+                remark = remark,
+                billId = if (state.billId == 0L) null else state.billId.toString()
             )){
                 is ResNet.Error -> {
                     updateState {

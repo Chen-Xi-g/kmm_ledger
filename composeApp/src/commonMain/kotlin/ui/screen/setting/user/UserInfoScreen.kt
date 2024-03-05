@@ -56,11 +56,7 @@ fun UserInfoScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
-            UserInfoContent(component, state, component::onEvent)
-        } else {
-            UserInfoContentLarge(state, component::onEvent)
-        }
+        UserInfoContent(component, state, component::onEvent)
     }
 }
 

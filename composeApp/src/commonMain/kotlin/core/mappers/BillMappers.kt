@@ -28,8 +28,10 @@ fun ResNet<List<BillListDto>>.toBillListVo(): ResNet<List<BillListEntity>> = map
                     billRemark = child.remark,
                     billAmount = child.billAmount.toYuan(),
                     billTypeName = child.userPayTypeDto.typeName.chunked(2).joinToString("\n"),
-                    createTime = child.createTime.toHourMinute(),
-                    isIncome = child.userPayTypeDto.typeTag == "1"
+                    createTime = child.createTime,
+                    isIncome = child.userPayTypeDto.typeTag == "1",
+                    userAccountDto = child.userAccountDto,
+                    userPayTypeDto = child.userPayTypeDto
                 )
             },
             isExpanded = index < 3

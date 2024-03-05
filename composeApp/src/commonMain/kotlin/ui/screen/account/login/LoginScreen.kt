@@ -48,7 +48,9 @@ import core.utils.Res
 import core.utils.pxToDp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import platform.WindowInfo
 import platform.base64ToBitmap
+import platform.rememberWindowInfo
 import platform.safeArea
 import ui.theme.LocalColor
 import ui.theme.LocalDrawable
@@ -68,6 +70,7 @@ fun LoginScreen(
     component: LoginVM
 ) {
     val state by component.state.collectAsState()
+    val windowInfo = rememberWindowInfo()
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {

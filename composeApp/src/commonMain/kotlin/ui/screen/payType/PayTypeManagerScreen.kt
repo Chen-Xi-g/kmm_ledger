@@ -79,11 +79,7 @@ fun PayTypeManagerScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact) {
-            PayTypeManagerContent(state, component::onEvent)
-        } else {
-            PayTypeManagerContentLarge(state, component::onEvent)
-        }
+        PayTypeManagerContent(state, component::onEvent)
     }
     LoadingDialog(state.isLoading)
     RemoveDialog(state, component::onEvent)

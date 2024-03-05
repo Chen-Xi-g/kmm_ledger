@@ -46,6 +46,13 @@ fun Long.toLocalDate(): LocalDateTime {
 }
 
 /**
+ * 将yyyy-MM-dd HH:mm:ss转换为LocalDateTime
+ */
+fun String.toLocalDateTime(): LocalDateTime {
+    return LocalDateTime.parse(this.replace(" ","T"))
+}
+
+/**
  * 计算这个月有多少天
  */
 fun LocalDate.monthDays(): Int {

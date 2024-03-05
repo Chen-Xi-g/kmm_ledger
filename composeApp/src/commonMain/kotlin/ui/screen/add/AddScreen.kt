@@ -120,11 +120,7 @@ fun AddScreen(
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (windowInfo.screenWidthInfo == WindowInfo.WindowType.Compact || windowInfo.screenWidthInfo == WindowInfo.WindowType.Medium) {
-            AddContent(state, component.keyboardContent, component::onEvent)
-        } else {
-            AddContentLarge(state, component::onEvent)
-        }
+        AddContent(state, component.keyboardContent, component::onEvent)
     }
     LoadingDialog(state.isLoading)
     FilterDateTimePicker(
