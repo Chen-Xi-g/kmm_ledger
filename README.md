@@ -1,4 +1,4 @@
-# Kotlin Multiplatform 忞鹿记账（开发中）
+# Kotlin Multiplatform 忞鹿记账
 
 使用 Kotlin Multiplatform 开发的跨平台记账应用，支持 Android、iOS、Desktop 平台的深色模式、横竖屏、宽窄屏。
 由于Web平台目前处于实验阶段，所以暂时不支持Web平台。待Web平台稳定后会考虑支持。
@@ -18,6 +18,15 @@
 由于本人是 Android 开发者，所以对于`设计图/后端代码`不是很擅长，如果有小伙伴有兴趣可以一起开发，欢迎联系我。
 
 设计图使用Figma, 后端使用RuoYi搭建。
+
+## 体验地址
+
+管理后台：[忞鹿记账后台](http://griffin.ledger.plf.minlukj.com/)。由于是自己的项目，不熟悉后台的东西，所以不提供账号密码了。
+
+接口地址：http://griffin.ledger.api.minlukj.com/
+
+**移动端账号：**abcd1234
+**移动端密码：**1234qwer
 
 ## 应用截图
 
