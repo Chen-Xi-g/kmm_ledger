@@ -12,7 +12,7 @@ object Res {
 
     object httpClient{
         val server_protocol = URLProtocol.HTTP
-        const val server_host = "griffin.ledger.api.minlukj.com"
+        const val server_host = "ht.ledger.api.minlukj.com"
         const val server_port = 80
         val String.base_path
             get() = "api/app/$this"

@@ -21,9 +21,9 @@
 
 ## 体验地址
 
-管理后台：[忞鹿记账后台](http://griffin.ledger.plf.minlukj.com/)。由于是自己的项目，不熟悉后台的东西，所以不提供账号密码了。
+管理后台：[忞鹿记账后台](http://ht.ledger.plf.minlukj.com/)。由于是自己的项目，不熟悉后台的东西，所以不提供账号密码了。
 
-接口地址：http://griffin.ledger.api.minlukj.com/
+接口地址：http://ht.ledger.api.minlukj.com/
 
 **移动端账号：**abcd1234
 **移动端密码：**1234qwer
